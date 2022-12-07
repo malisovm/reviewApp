@@ -1,9 +1,13 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
+import { dataApi } from './apiSlice'
+import localeReducer from './localeSlice'
 
 export const store = configureStore({
   reducer: {
-    //put reducers here
+    locale: localeReducer,
+    [dataApi.reducerPath]: dataApi.reducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(dataApi.middleware),
 })
 
 export type AppDispatch = typeof store.dispatch
