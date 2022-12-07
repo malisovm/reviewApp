@@ -10,3 +10,7 @@ This is a rating app created as part of my internship.
 - RTK Query
 - Node.js
 - Express
+
+### Live version
+
+The deployed app is available [here](https://ratingapp-production.up.railway.app).
