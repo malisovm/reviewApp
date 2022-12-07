@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.dark {
-  @apply bg-gray-800 text-zinc-50;
-}
-
-input .dark {
-  @apply bg-gray-800 text-zinc-50;
-}
-
 html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ul, li{
   margin: 0;
   padding: 0;
@@ -20,4 +12,16 @@ html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ul, li{
 
 html, body, #root, .App {
   height: 100%;
+}
+
+.dark {
+  @apply bg-gray-800 text-zinc-50;
+}
+
+input {
+  @apply m-1 p-1 dark:bg-slate-800 border-2 rounded;
+}
+
+h3 {
+  @apply font-bold text-2xl
 }

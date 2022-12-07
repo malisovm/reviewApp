@@ -1,15 +1,24 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-// this is a bolierplate setup
+import { IReview } from '../interfaces'
 
 export const dataApi = createApi({
   reducerPath: 'dataApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://pokeapi.co/api/v2/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: '/' }),
   endpoints: (builder) => ({
-    getPokemonByName: builder.query<any, string>({
-      query: (name) => `pokemon/${name}`,
+    //getPokemonByName: builder.query<any, string>({
+    //  query: (name) => `pokemon/${name}`,
+    //}),
+    addReview: builder.mutation<void, IReview>({
+      query: (payload: IReview) => ({
+        url: '/reviews',
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }),
     }),
   }),
 })
 
-export const { useGetPokemonByNameQuery } = dataApi
+export const { useAddReviewMutation } = dataApi
