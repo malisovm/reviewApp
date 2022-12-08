@@ -8,6 +8,18 @@ const __dirname = dirname(__filename)
 const app = express()
 const PORT = process.env.PORT || 3001
 
+interface IReview {
+  title: string
+  product: string
+  groups: string
+  tags: string[]
+  text: string
+  pic: string
+  rating: string
+}
+
+var reviews:IReview[] = []
+
 app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 const JSONParser = express.json({ type: 'application/json' })
 app.listen(PORT, () => {
@@ -15,7 +27,12 @@ app.listen(PORT, () => {
 })
 
 app.post('/reviews', JSONParser, (req, res) => {
-  console.log(req.body)
+  reviews.push(req.body)
+  console.log(reviews)
+})
+
+app.get('/reviews', (req, res) => {
+  res.send(reviews)
 })
 
 app.get('*', (res: Response) => {

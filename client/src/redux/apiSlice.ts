@@ -4,10 +4,12 @@ import { IReview } from '../interfaces'
 export const dataApi = createApi({
   reducerPath: 'dataApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/' }),
+  tagTypes: ['reviews'],
   endpoints: (builder) => ({
-    //getPokemonByName: builder.query<any, string>({
-    //  query: (name) => `pokemon/${name}`,
-    //}),
+    getReviews: builder.query<IReview[], void>({
+      query: (arg: void) => '/reviews',
+      providesTags: ['reviews'],
+    }),
     addReview: builder.mutation<void, IReview>({
       query: (payload: IReview) => ({
         url: '/reviews',
@@ -17,8 +19,9 @@ export const dataApi = createApi({
           'Content-type': 'application/json; charset=UTF-8',
         },
       }),
+      invalidatesTags: ['reviews'],
     }),
   }),
 })
 
-export const { useAddReviewMutation } = dataApi
+export const { useAddReviewMutation, useGetReviewsQuery } = dataApi
