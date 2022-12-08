@@ -1,9 +1,9 @@
 export interface IReview {
   title: string
   product: string
-  groups: string
+  group: string
   tags: {value: string}[]
   text: string
   pic: string
-  rating: string
+  rating: number
 }

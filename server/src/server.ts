@@ -11,11 +11,11 @@ const PORT = process.env.PORT || 3001
 interface IReview {
   title: string
   product: string
-  groups: string
-  tags: string[]
+  group: string
+  tags: {value: string}[]
   text: string
   pic: string
-  rating: string
+  rating: number
 }
 
 var reviews:IReview[] = []
