@@ -5,19 +5,19 @@ import NewReviewForm from './components/NewReviewForm'
 import MyReviews from './components/MyReviews'
 
 export default function App() {
-  const [darkTheme, setDarkTheme] = useState(false)
+  var initialTheme: string | null = localStorage.getItem('theme')
+  if (!initialTheme) initialTheme = 'light'
+  const [theme, setTheme] = useState(initialTheme)
 
   return (
+    <div data-theme={theme === 'dark' ? 'dark' : 'light'} className={`h-full ${theme === 'dark' ? 'dark' : ''}`}>
+      <Navbar theme={theme} setTheme={setTheme} />
 
-      <div data-theme={darkTheme ? 'dark' : 'light'} className={`h-full ${darkTheme ? 'dark' : ''}`}>
-        <Navbar darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
-
-        <Routes>
-          <Route path="/" element={<div>Reviews</div>} />
-          <Route path="/newreview" element={<NewReviewForm />} />
-          <Route path="/myreviews" element={<MyReviews />} />
-        </Routes>
-      </div>
-
+      <Routes>
+        <Route path="/" element={<div>Reviews</div>} />
+        <Route path="/newreview" element={<NewReviewForm />} />
+        <Route path="/myreviews" element={<MyReviews />} />
+      </Routes>
+    </div>
   )
 }

@@ -10,7 +10,7 @@ export const dataApi = createApi({
       query: (arg: void) => '/reviews',
       providesTags: ['reviews'],
     }),
-    addReview: builder.mutation<void, IReview>({
+    addReview: builder.mutation<string, IReview>({
       query: (payload: IReview) => ({
         url: '/reviews',
         method: 'POST',
@@ -19,7 +19,7 @@ export const dataApi = createApi({
           'Content-type': 'application/json; charset=UTF-8',
         },
       }),
-      invalidatesTags: ['reviews'],
+      invalidatesTags: ['reviews']
     }),
   }),
 })

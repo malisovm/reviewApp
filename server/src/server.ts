@@ -28,7 +28,7 @@ app.listen(PORT, () => {
 
 app.post('/reviews', JSONParser, (req, res) => {
   reviews.push(req.body)
-  console.log(reviews)
+  res.send(JSON.stringify('new review posted'))
 })
 
 app.get('/reviews', (req, res) => {

@@ -2,12 +2,18 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface IProps {
-  darkTheme: boolean
-  setDarkTheme: (darkTheme: boolean) => void
+  theme: string
+  setTheme: (theme: string) => void
 }
 
-export default function Navbar({ darkTheme, setDarkTheme }: IProps) {
+export default function Navbar({ theme, setTheme }: IProps) {
   const navigate = useNavigate()
+
+  function toggleTheme() {
+    let newTheme:string = theme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
+    localStorage.setItem('theme', newTheme)
+  }
 
   return (
     <div className="flex justify-between bg-gray-900 dark:bg-gray-200">
@@ -39,9 +45,7 @@ export default function Navbar({ darkTheme, setDarkTheme }: IProps) {
         <input
           type="checkbox"
           className="toggle toggle-primary cursor-pointer align-middle"
-          onClick={() => {
-            setDarkTheme(!darkTheme)
-          }}
+          onClick={toggleTheme}
         />
       </span>
     </div>
