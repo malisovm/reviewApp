@@ -39,5 +39,5 @@ app.get('/reviews', (req, res) => {
 })
 
 app.get('*', (res: Response) => {
-  res.sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
+  res.sendfile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
 })

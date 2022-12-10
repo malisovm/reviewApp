@@ -10,7 +10,7 @@ export default function Navbar({ theme, setTheme }: IProps) {
   const navigate = useNavigate()
 
   function toggleTheme() {
-    let newTheme: string = theme === 'light' ? 'dark' : 'light'
+    let newTheme:string = theme === 'light' ? 'dark' : 'light'
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
   }
@@ -42,7 +42,11 @@ export default function Navbar({ theme, setTheme }: IProps) {
         >
           My reviews
         </button>
-        <input type="checkbox" className="toggle toggle-primary cursor-pointer align-middle" onClick={toggleTheme} />
+        <input
+          type="checkbox"
+          className="toggle toggle-primary cursor-pointer align-middle"
+          onClick={toggleTheme}
+        />
       </span>
     </div>
   )

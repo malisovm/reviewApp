@@ -21,9 +21,9 @@ export default function NewReviewForm() {
       tags: [{ value: '' }],
     },
   })
-  const onSubmit: SubmitHandler<IReview> = (review) => {
-    console.log(review)
-    addReview(review)
+  const onSubmit: SubmitHandler<IReview> = (data) => {
+    console.log(data)
+    addReview(data)
   }
 
   const { fields, append, remove } = useFieldArray({
@@ -40,7 +40,7 @@ export default function NewReviewForm() {
 
   return (
     <div className="flex h-5/6 justify-center">
-      <form className="flex justify-center flex-col m-3 gap-2 w-5/6 max-w-xl" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex justify-center flex-col m-3 gap-2" onSubmit={handleSubmit(onSubmit)}>
         <>
           <header className="text-center font-bold text-2xl mb-3">Create new review</header>
           {textInputs.map((input, index) => (
@@ -83,7 +83,7 @@ export default function NewReviewForm() {
             </label>
           ))}
 
-          <label>
+<label>
             <span>Tags</span>
             {fields.map((field, index) => (
               <div key={field.id}>
@@ -111,6 +111,7 @@ export default function NewReviewForm() {
             ))}
             {errors.tags && <div className="text-red-700">One of the tags is too long</div>}
           </label>
+
           <button type="submit" className="btn btn-active btn-primary mt-3">
             Submit
           </button>
