@@ -27,11 +27,14 @@ app.listen(PORT, () => {
 })
 
 app.post('/reviews', JSONParser, (req, res) => {
-  reviews.push(req.body)
+  let review = req.body
+  if (review.tags[0].value === '') review.tags = []
+  reviews.push(review)
   res.send(JSON.stringify('new review posted'))
 })
 
 app.get('/reviews', (req, res) => {
+  console.log(JSON.stringify(reviews))
   res.send(reviews)
 })
 

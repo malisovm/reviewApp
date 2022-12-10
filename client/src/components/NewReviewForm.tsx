@@ -1,13 +1,15 @@
 import React from 'react'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { IReview } from '../interfaces'
-import { useAddReviewMutation } from '../redux/apiSlice'
+import { useAddReviewMutation, useGetReviewsQuery } from '../redux/apiSlice'
 import { BsPlusCircle } from 'react-icons/bs'
 import { BsXCircle } from 'react-icons/bs'
 import { capitalize } from '../utility'
+import Autocomplete from '@mui/joy/Autocomplete'
 
 export default function NewReviewForm() {
   const [addReview] = useAddReviewMutation()
+  const { data: reviews, isLoading, isError } = useGetReviewsQuery()
 
   const {
     register,
@@ -16,13 +18,12 @@ export default function NewReviewForm() {
     control,
   } = useForm<IReview>({
     defaultValues: {
-      group: 'default',
       tags: [{ value: '' }],
     },
   })
-  const onSubmit: SubmitHandler<IReview> = (data) => {
-    console.log(data)
-    addReview(data)
+  const onSubmit: SubmitHandler<IReview> = (review) => {
+    console.log(review)
+    addReview(review)
   }
 
   const { fields, append, remove } = useFieldArray({
@@ -30,13 +31,16 @@ export default function NewReviewForm() {
     control,
   })
 
+  const notUniqueTags = reviews?.flatMap((tag) => tag.tags.map((tag) => tag.value))
+  const tags = [...new Set(notUniqueTags)]
+
   const textInputs = ['title', 'product', 'text', 'pic']
   const selectInputs = { group: ['Books', 'Movies', 'Games'], rating: Array.from({ length: 10 }, (_, i) => i + 1) }
   if (errors.tags) console.log(errors.tags)
 
   return (
     <div className="flex h-5/6 justify-center">
-      <form className="flex justify-center flex-col m-3 gap-2" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex justify-center flex-col m-3 gap-2 w-5/6 max-w-xl" onSubmit={handleSubmit(onSubmit)}>
         <>
           <header className="text-center font-bold text-2xl mb-3">Create new review</header>
           {textInputs.map((input, index) => (
@@ -83,7 +87,14 @@ export default function NewReviewForm() {
             <span>Tags</span>
             {fields.map((field, index) => (
               <div key={field.id}>
-                <input placeholder="Enter tag" {...register(`tags.${index}.value` as const, { maxLength: 30 })} />
+                {/*//@ts-ignore*/}
+                <Autocomplete
+                  freeSolo
+                  variant="solid"
+                  options={tags}
+                  placeholder="Enter tag"
+                  {...register(`tags.${index}.value` as const, { maxLength: 30 })}
+                />
                 <button
                   className="align-middle mr-1"
                   type="button"

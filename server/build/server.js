@@ -13,10 +13,14 @@ app.listen(PORT, () => {
     console.log(`The server is up at ${PORT}`);
 });
 app.post('/reviews', JSONParser, (req, res) => {
-    reviews.push(req.body);
-    console.log(reviews);
+    let review = req.body;
+    if (review.tags[0].value === '')
+        review.tags = [];
+    reviews.push(review);
+    res.send(JSON.stringify('new review posted'));
 });
 app.get('/reviews', (req, res) => {
+    console.log(JSON.stringify(reviews));
     res.send(reviews);
 });
 app.get('*', (res) => {

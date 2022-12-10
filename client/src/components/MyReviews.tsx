@@ -4,13 +4,13 @@ import { IReview } from '../interfaces'
 import ScoreIndicator from './ScoreIndicator'
 
 export default function MyReviews() {
-  const { data, isLoading, isError } = useGetReviewsQuery()
+  const { data: reviews, isLoading, isError } = useGetReviewsQuery()
   if (isLoading) return <h1>Loading...</h1>
   if (isError) return <h1>An error occured</h1>
 
   return (
     <div className="flex justify-center mt-3 gap-3 flex-wrap">
-      {data?.map((review: IReview, index) => (
+      {reviews?.map((review: IReview, index) => (
         <div key={index} className="card w-96 bg-base-100 shadow-xl">
           <figure>
             <img src="https://placeimg.com/400/225/arch" alt="" />
@@ -27,7 +27,9 @@ export default function MyReviews() {
               </div>
             </h2>
             <div className="italic">Review of "{review.product}"</div>
-            <div>Verdict: <ScoreIndicator score={review.rating}/></div>
+            <div>
+              Verdict: <ScoreIndicator score={review.rating} />
+            </div>
             <div>{review.text}</div>
             <div className="card-actions justify-end">
               {review.tags.map((tag: { value: string }, index) => (
