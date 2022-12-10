@@ -33,11 +33,11 @@ app.post('/reviews', JSONParser, (req, res) => {
   res.send(JSON.stringify('new review posted'))
 })
 
-app.get('/reviews', (req, res) => {
+app.get('/reviews', (_, res) => {
   console.log(JSON.stringify(reviews))
   res.send(reviews)
 })
 
-app.get('*', (res: Response) => {
-  res.sendfile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
+app.get('*', (_, res: Response) => {
+  res.sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
 })
