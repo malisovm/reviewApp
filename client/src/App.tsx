@@ -10,7 +10,10 @@ export default function App() {
   const [theme, setTheme] = useState(initialTheme)
 
   return (
-    <div data-theme={theme === 'dark' ? 'dark' : 'light'} className={`h-full ${theme === 'dark' ? 'dark' : ''}`}>
+    <div
+      data-theme={theme === 'dark' ? 'dark' : 'light'}
+      className={`h-full ${theme === 'dark' ? 'dark' : ''} flex-row h-screen overflow-y-hidden`}
+    >
       <Navbar theme={theme} setTheme={setTheme} />
 
       <Routes>

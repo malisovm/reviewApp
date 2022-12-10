@@ -16,7 +16,7 @@ export default function Navbar({ theme, setTheme }: IProps) {
   }
 
   return (
-    <div className="flex justify-between bg-gray-900 dark:bg-gray-200">
+    <div className="flex h-16 justify-between items-center bg-gray-900 dark:bg-gray-200">
       <button
         className="italic text-2xl m-3 text-primary font-bold"
         onClick={() => {
