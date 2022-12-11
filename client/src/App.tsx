@@ -12,7 +12,7 @@ export default function App() {
   return (
     <div
       data-theme={theme === 'dark' ? 'dark' : 'light'}
-      className={`h-full ${theme === 'dark' ? 'dark' : ''} flex-row h-screen overflow-y-hidden`}
+      className={`h-full ${theme === 'dark' ? 'dark' : ''} flex-row h-full w-full overflow-y-hidden bg-gray-200 dark:bg-gray-800"`}
     >
       <Navbar theme={theme} setTheme={setTheme} />
 
