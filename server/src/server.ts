@@ -12,7 +12,7 @@ interface IReview {
   title: string
   product: string
   group: string
-  tags: {value: string}[]
+  tags?: string[]
   text: string
   pic: string
   rating: number
@@ -27,9 +27,7 @@ app.listen(PORT, () => {
 })
 
 app.post('/reviews', JSONParser, (req, res) => {
-  let review = req.body
-  if (review.tags[0].value === '') review.tags = []
-  reviews.push(review)
+  reviews.push(req.body)
   res.send(JSON.stringify('new review posted'))
 })
 

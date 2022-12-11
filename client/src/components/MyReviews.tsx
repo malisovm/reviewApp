@@ -32,9 +32,9 @@ export default function MyReviews() {
             </div>
             <div>{review.text}</div>
             <div className="card-actions justify-end">
-              {review.tags.map((tag: { value: string }, index) => (
+              {review?.tags?.map((tag, index) => (
                 <div key={index} className="badge badge-outline">
-                  {tag.value}
+                  {tag}
                 </div>
               ))}
             </div>
