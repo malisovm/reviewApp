@@ -4,32 +4,38 @@ import { IReview } from '../interfaces'
 import { useAddReviewMutation, useGetReviewsQuery } from '../redux/apiSlice'
 import { capitalize } from '../utility'
 import Autocomplete from '@mui/joy/Autocomplete'
+import { useNavigate } from 'react-router-dom'
 
 export default function NewReviewForm() {
   const [addReview] = useAddReviewMutation()
   const { data: reviews } = useGetReviewsQuery()
   const [newReviewTags, setNewReviewTags] = useState<string[]>([])
+  const [resetTags, setResetTags] = useState<string>(Math.random().toString())
+  const navigate = useNavigate()
 
   const {
     register,
     formState: { errors },
     handleSubmit,
-    control,
+    reset,
   } = useForm<IReview>()
+
   const onSubmit: SubmitHandler<IReview> = (newReview) => {
     newReview.tags = newReviewTags
     addReview(newReview)
+    reset()
+    setResetTags(Math.random().toString())
+    navigate('/myreviews')
   }
 
-  const tags = [...new Set(reviews?.flatMap(review => review.tags))]
-
+  const uniqueTags = [...new Set(reviews?.flatMap((review) => review.tags))]
   const textInputs = ['title', 'product', 'text', 'pic']
   const selectInputs = { group: ['Books', 'Movies', 'Games'], rating: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
 
   return (
-    <div className="flex h-5/6 justify-center">
-      <section className="flex justify-center self-center p-6 bg-white dark:bg-gray-900 rounded-xl">
-        <form className="flex justify-center flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+    <div className="flex justify-center mt-32">
+      <section className="bg-white dark:bg-gray-900 rounded-xl w-5/6 max-w-md">
+        <form className="p-6 flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
           <header className="text-center font-bold text-2xl mb-3">Create new review</header>
           {textInputs.map((input, index) => (
             <label key={index}>
@@ -76,14 +82,21 @@ export default function NewReviewForm() {
             <Autocomplete
               className="w-4/6"
               multiple
-              //@ts-ignore
-              onChange={(_, value) => {setNewReviewTags(value)}}
+              onChange={(_, value) => {
+                let tags = value as string[]
+                setNewReviewTags(tags)
+              }}
               freeSolo
               autoHighlight
               blurOnSelect
-              variant="solid"
-              options={tags}
-              placeholder="Enter tag"
+              options={uniqueTags}
+              placeholder="Add tag"
+              renderOption={(props, option) => (
+                <li {...props} className="bg-gray-200 text-black">
+                  {`+${option}`}
+                </li>
+              )}
+              key={resetTags}
             />
           </label>
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useGetReviewsQuery } from '../redux/apiSlice'
 import { IReview } from '../interfaces'
-import ScoreIndicator from './ScoreIndicator'
+import ScoreIndicator from '../components/ScoreIndicator'
 
 export default function MyReviews() {
   const { data: reviews, isLoading, isError } = useGetReviewsQuery()

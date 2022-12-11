@@ -2,22 +2,22 @@ import React, { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import NewReviewForm from './components/NewReviewForm'
-import MyReviews from './components/MyReviews'
+import Main from './pages/Main'
+import MyReviews from './pages/MyReviews'
+import { useAppSelector } from './redux/hooks'
 
 export default function App() {
-  var initialTheme: string | null = localStorage.getItem('theme')
-  if (!initialTheme) initialTheme = 'light'
-  const [theme, setTheme] = useState(initialTheme)
+  const theme = useAppSelector((state) => state.globalVars.theme)
 
   return (
     <div
       data-theme={theme === 'dark' ? 'dark' : 'light'}
-      className={`h-full ${theme === 'dark' ? 'dark' : ''} flex-row h-full w-full overflow-y-hidden bg-gray-200 dark:bg-gray-800"`}
+      className={`${theme === 'dark' ? 'dark' : ''} bg-gray-200 dark:bg-gray-800 min-h-screen flex-row`}
     >
-      <Navbar theme={theme} setTheme={setTheme} />
+      <Navbar />
 
       <Routes>
-        <Route path="/" element={<div>Reviews</div>} />
+        <Route path="/" element={<Main />} />
         <Route path="/newreview" element={<NewReviewForm />} />
         <Route path="/myreviews" element={<MyReviews />} />
       </Routes>

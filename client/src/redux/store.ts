@@ -1,10 +1,10 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
 import { dataApi } from './apiSlice'
-import localeReducer from './localeSlice'
+import globalVarsReducer from './globalVarsSlice'
 
 export const store = configureStore({
   reducer: {
-    locale: localeReducer,
+    globalVars: globalVarsReducer,
     [dataApi.reducerPath]: dataApi.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(dataApi.middleware),
