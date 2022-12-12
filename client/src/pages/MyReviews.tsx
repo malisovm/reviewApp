@@ -1,7 +1,7 @@
 import React from 'react'
 import { useGetReviewsQuery } from '../redux/apiSlice'
 import { IReview } from '../interfaces'
-import ScoreIndicator from '../components/ScoreIndicator'
+import ReviewCard from '../components/ReviewCard'
 
 export default function MyReviews() {
   const { data: reviews, isLoading, isError } = useGetReviewsQuery()
@@ -11,35 +11,7 @@ export default function MyReviews() {
   return (
     <div className="flex justify-center mt-3 gap-3 flex-wrap">
       {reviews?.map((review: IReview, index) => (
-        <div key={index} className="card w-96 bg-base-100 shadow-xl">
-          <figure>
-            <img src="https://placeimg.com/400/225/arch" alt="" />
-          </figure>
-          <div className="card-body">
-            <h2 className="card-title">
-              {review.title}
-              <div
-                className={`badge ${
-                  review.group === 'Books' ? 'badge-accent' : review.group === 'Games' ? 'badge-info' : 'badge-warning'
-                }`}
-              >
-                {review.group}
-              </div>
-            </h2>
-            <div className="italic">Review of "{review.product}"</div>
-            <div>
-              Verdict: <ScoreIndicator score={review.rating} />
-            </div>
-            <div>{review.text}</div>
-            <div className="card-actions justify-end">
-              {review?.tags?.map((tag, index) => (
-                <div key={index} className="badge badge-outline">
-                  {tag}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <ReviewCard review={review} />
       ))}
     </div>
   )

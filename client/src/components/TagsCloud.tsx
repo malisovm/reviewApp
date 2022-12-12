@@ -2,7 +2,6 @@ import React from 'react'
 import { TagCloud } from 'react-tagcloud'
 import { useAppSelector } from '../redux/hooks'
 import { useGetReviewsQuery } from '../redux/apiSlice'
-import { stringify } from 'querystring'
 
 export default function TagsCloud() {
   const theme = useAppSelector((state) => state.globalVars.theme)

@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { IReview } from '../interfaces'
 import { useAddReviewMutation, useGetReviewsQuery } from '../redux/apiSlice'
 import { capitalize } from '../utility'
 import Autocomplete from '@mui/joy/Autocomplete'
 import { useNavigate } from 'react-router-dom'
+import MDEditor from '@uiw/react-md-editor'
+import { useAppSelector } from '../redux/hooks'
 
 export default function NewReviewForm() {
   const [addReview] = useAddReviewMutation()
@@ -12,6 +14,9 @@ export default function NewReviewForm() {
   const [newReviewTags, setNewReviewTags] = useState<string[]>([])
   const [resetTags, setResetTags] = useState<string>(Math.random().toString())
   const navigate = useNavigate()
+  const [text, setText] = useState(`**Write your review here** (*Markdown syntax supported*)`)
+  const theme = useAppSelector((state) => state.globalVars.theme)
+
 
   const {
     register,
@@ -22,6 +27,7 @@ export default function NewReviewForm() {
 
   const onSubmit: SubmitHandler<IReview> = (newReview) => {
     newReview.tags = newReviewTags
+    newReview.text = text
     addReview(newReview)
     reset()
     setResetTags(Math.random().toString())
@@ -29,7 +35,7 @@ export default function NewReviewForm() {
   }
 
   const uniqueTags = [...new Set(reviews?.flatMap((review) => review.tags))]
-  const textInputs = ['title', 'product', 'text', 'pic']
+  const textInputs = ['title', 'product', 'pic']
   const selectInputs = { group: ['Books', 'Movies', 'Games'], rating: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
 
   return (
@@ -76,6 +82,18 @@ export default function NewReviewForm() {
               {errors[selectInput as keyof IReview] && <div className="text-red-700">Please select {selectInput}</div>}
             </label>
           ))}
+
+          <div className="mb-1">Text</div>
+          <div className="container" data-color-mode={theme}>
+            <MDEditor
+              value={text}
+              //@ts-ignore
+              onChange={setText}
+              preview="edit"
+            />
+            Preview:
+            <MDEditor.Markdown source={text} style={{ whiteSpace: 'pre-wrap' }} />
+          </div>
 
           <label>
             <div className="mb-1">Tags</div>
