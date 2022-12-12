@@ -22,6 +22,7 @@
     "react-router-dom": "^6.4.4",
     "react-scripts": "5.0.1",
     "react-tagcloud": "^2.3.1",
+    "reactstrap-md-textarea": "^3.1.0",
     "typescript": "^4.9.3"
   },
   "scripts": {
