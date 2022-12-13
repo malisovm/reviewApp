@@ -4,6 +4,6 @@ export interface IReview {
   group: string
   tags?: string[]
   text: string
-  pic: string
+  pic?: string
   rating: number
 }

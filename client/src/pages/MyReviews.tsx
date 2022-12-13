@@ -11,7 +11,7 @@ export default function MyReviews() {
   return (
     <div className="flex justify-center mt-3 gap-3 flex-wrap">
       {reviews?.map((review: IReview, index) => (
-        <ReviewCard review={review} />
+        <ReviewCard review={review} key={review.title}/>
       ))}
     </div>
   )

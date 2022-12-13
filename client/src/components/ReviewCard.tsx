@@ -3,6 +3,7 @@ import ScoreIndicator from './ScoreIndicator'
 import MDEditor from '@uiw/react-md-editor'
 import { IReview } from '../interfaces'
 import { useAppSelector } from '../redux/hooks'
+import MarkdownDetails from './MarkdownDetails'
 
 interface IProps {
   review: IReview
@@ -13,8 +14,8 @@ export default function ReviewCard({ review }: IProps) {
 
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
-      <figure>
-        <img src="https://placeimg.com/400/225/arch" alt="" />
+      <figure className='mt-2'>
+        <img src={review.pic} alt="" />
       </figure>
       <div className="card-body">
         <h2 className="card-title">
@@ -33,16 +34,7 @@ export default function ReviewCard({ review }: IProps) {
         </div>
         <details className="container" data-color-mode={theme}>
           <summary>Read full review</summary>
-          <MDEditor.Markdown
-            style={{ whiteSpace: 'pre-wrap', backgroundColor: theme === 'dark' ? '#2A303C' : 'white' }}
-            source={review.text}
-            rehypeRewrite={(node, index, parent) => {
-              //@ts-ignore
-              if (node.tagName === 'a' && parent && /^h(1|2|3|4|5|6)/.test(parent.tagName)) {
-                parent.children = parent.children.slice(1)
-              }
-            }}
-          />
+          <MarkdownDetails text={review.text}/>
         </details>
         <div className="card-actions justify-end">
           {review?.tags?.map((tag, index) => (
