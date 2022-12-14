@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useAppDispatch } from '../redux/hooks'
-import { setUser, setMessage } from '../redux/globalVarsSlice'
+import { setUser, setAlert } from '../redux/localSlice'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -22,7 +22,7 @@ export default function Login() {
   const onSubmit: SubmitHandler<IResults> = (results) => {
     console.log(results)
     dispatch(setUser({ name: results.username, role: 'authorized' }))
-    dispatch(setMessage({ text: `Logged in as ${results.username}`, variant: 'alert-success' }))
+    dispatch(setAlert({ text: `Logged in as ${results.username}`, variant: 'alert-success' }))
     navigate('/')
   }
 

@@ -6,9 +6,10 @@ import { capitalize } from '../utility'
 import Autocomplete from '@mui/joy/Autocomplete'
 import { useNavigate } from 'react-router-dom'
 import MDEditor from '@uiw/react-md-editor'
-import { useAppSelector } from '../redux/hooks'
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import PicUpload from './PicUpload'
-import MarkdownDetails from './MarkdownDetails'
+import MarkdownText from './MarkdownText'
+import { setAlert } from '../redux/localSlice'
 
 export default function NewReviewForm() {
   const [addReview] = useAddReviewMutation()
@@ -17,8 +18,9 @@ export default function NewReviewForm() {
   const [resetTags, setResetTags] = useState<string>(Math.random().toString())
   const navigate = useNavigate()
   const [text, setText] = useState(`**Write your review here** (*Markdown syntax supported*)`)
-  const theme = useAppSelector((state) => state.globalVars.theme)
+  const theme = useAppSelector((state) => state.local.theme)
   const [pic, setPic] = useState<string>()
+  const dispatch = useAppDispatch()
 
   const {
     register,
@@ -34,6 +36,7 @@ export default function NewReviewForm() {
     addReview(newReview)
     reset()
     setResetTags(Math.random().toString())
+    dispatch(setAlert({ text: 'New review added', variant: 'alert-success' }))
     navigate('/')
   }
 
@@ -97,7 +100,7 @@ export default function NewReviewForm() {
               />
               <details className="border rounded mt-1 p-1">
                 <summary>See preview</summary>
-                <MarkdownDetails text={text} />
+                <MarkdownText text={text} />
               </details>
             </div>
           </label>

@@ -26,7 +26,7 @@ export default function PicUpload({ setPic }: IProps) {
         setPic(data.url)
       })
       .catch((err) => console.log(err))
-  }, [acceptedFiles])
+  }, [acceptedFiles, setPic])
 
   return (
     <div className="flex flex-col justify-center">
@@ -37,7 +37,7 @@ export default function PicUpload({ setPic }: IProps) {
         <input {...getInputProps()} />
         <div>Drag 'n' drop an image file here</div>
       </div>
-      {acceptedFiles[0] && <img src={url} className="text-center" />}
+      {acceptedFiles[0] && <img src={url} alt='' className="text-center" />}
     </div>
   )
 }

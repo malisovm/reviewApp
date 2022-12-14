@@ -4,7 +4,7 @@ import { useAppSelector } from '../redux/hooks'
 import { useGetReviewsQuery } from '../redux/apiSlice'
 
 export default function TagsCloud() {
-  const theme = useAppSelector((state) => state.globalVars.theme)
+  const theme = useAppSelector((state) => state.local.theme)
   const { data: reviews } = useGetReviewsQuery()
   const tags = reviews?.flatMap((review) => review.tags)
 

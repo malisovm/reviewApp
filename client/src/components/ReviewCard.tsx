@@ -1,16 +1,15 @@
 import React from 'react'
 import ScoreIndicator from './ScoreIndicator'
-import MDEditor from '@uiw/react-md-editor'
 import { IReview } from '../interfaces'
 import { useAppSelector } from '../redux/hooks'
-import MarkdownDetails from './MarkdownDetails'
+import MarkdownText from './MarkdownText'
 
 interface IProps {
   review: IReview
 }
 
 export default function ReviewCard({ review }: IProps) {
-  const theme = useAppSelector((state) => state.globalVars.theme)
+  const theme = useAppSelector((state) => state.local.theme)
 
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
@@ -34,7 +33,7 @@ export default function ReviewCard({ review }: IProps) {
         </div>
         <details className="container" data-color-mode={theme}>
           <summary>Read full review</summary>
-          <MarkdownDetails text={review.text} />
+          <MarkdownText text={review.text} />
         </details>
         <div className="card-actions justify-end">
           {review?.tags?.map((tag, index) => (

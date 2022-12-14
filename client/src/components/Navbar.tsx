@@ -1,13 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
-import { setTheme, setUser, setMessage } from '../redux/globalVarsSlice'
+import { setTheme, setUser, setAlert } from '../redux/localSlice'
 
 export default function Navbar() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const theme = useAppSelector((state) => state.globalVars.theme)
-  const user = useAppSelector((state) => state.globalVars.user)
+  const theme = useAppSelector((state) => state.local.theme)
+  const user = useAppSelector((state) => state.local.user)
 
   function toggleTheme() {
     let newTheme: string = theme === 'light' ? 'dark' : 'light'
@@ -49,7 +49,7 @@ export default function Navbar() {
               className="btn btn-primary"
               onClick={() => {
                 dispatch(setUser({ name: '', role: 'unauthorized' }))
-                dispatch(setMessage({ text: 'You have logged out...', variant: 'alert-success' }))
+                dispatch(setAlert({ text: 'You have logged out...', variant: 'alert-success' }))
                 navigate('/')
               }}
             >

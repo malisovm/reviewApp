@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import NewReviewForm from './components/NewReviewForm'
 import Main from './pages/Main'
@@ -6,10 +6,10 @@ import MyReviews from './pages/MyReviews'
 import { useAppSelector } from './redux/hooks'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
-import Message from './components/Message'
+import Message from './components/Alert'
 
 export default function App() {
-  const theme = useAppSelector((state) => state.globalVars.theme)
+  const theme = useAppSelector((state) => state.local.theme)
 
   return (
     <div
