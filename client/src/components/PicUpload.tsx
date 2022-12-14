@@ -5,7 +5,7 @@ interface IProps {
   setPic: (pic: string) => void
 }
 
-export default function PicUpload({setPic}: IProps) {
+export default function PicUpload({ setPic }: IProps) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     maxFiles: 1,
   })

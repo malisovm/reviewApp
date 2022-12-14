@@ -14,7 +14,7 @@ export default function ReviewCard({ review }: IProps) {
 
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
-      <figure className='mt-2'>
+      <figure className="mt-2">
         <img src={review.pic} alt="" />
       </figure>
       <div className="card-body">
@@ -34,7 +34,7 @@ export default function ReviewCard({ review }: IProps) {
         </div>
         <details className="container" data-color-mode={theme}>
           <summary>Read full review</summary>
-          <MarkdownDetails text={review.text}/>
+          <MarkdownDetails text={review.text} />
         </details>
         <div className="card-actions justify-end">
           {review?.tags?.map((tag, index) => (

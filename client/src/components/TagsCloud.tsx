@@ -7,7 +7,6 @@ export default function TagsCloud() {
   const theme = useAppSelector((state) => state.globalVars.theme)
   const { data: reviews } = useGetReviewsQuery()
   const tags = reviews?.flatMap((review) => review.tags)
-  console.log('TAGS', reviews)
 
   // TagCloud API. tags = [ {value: string, count: number}, ...]
 
@@ -29,7 +28,7 @@ export default function TagsCloud() {
   if (tags) uniqueTagsAndCounts = countUniqueTags(tags.filter((tag) => tag !== undefined) as string[])
 
   return (
-    <div className="bg-gray-800 dark:bg-white w-56 h-56 flex justify-center items-center rounded">
+    <div className="bg-gray-800 dark:bg-white w-56 h-56 flex justify-center items-center rounded-xl">
       {tags && tags.length > 0 ? (
         <TagCloud
           minSize={12}
@@ -39,7 +38,7 @@ export default function TagsCloud() {
           colorOptions={{ hue: 'blue', luminosity: theme === 'dark' ? 'bright' : 'light' }}
         />
       ) : (
-        <span className="text-black">No tags yet</span>
+        <span className="text-white dark:text-black">No tags yet</span>
       )}
     </div>
   )

@@ -9,7 +9,12 @@ if (
   initialTheme = 'dark'
 else initialTheme = 'light'
 
-const initialState = { theme: initialTheme, locale: 'en' }
+const initialState = {
+  theme: initialTheme,
+  locale: 'en',
+  user: { name: '', role: 'unauthorized' },
+  message: { text: '', variant: '' },
+}
 
 const globalVarsSlice = createSlice({
   name: 'globalVars',
@@ -21,8 +26,14 @@ const globalVarsSlice = createSlice({
     setTheme(state, action: PayloadAction<string>) {
       state.theme = action.payload
     },
+    setUser(state, action: PayloadAction<{ name: string; role: string }>) {
+      state.user = action.payload
+    },
+    setMessage(state, action: PayloadAction<{ text: string; variant: string }>) {
+      state.message = action.payload
+    },
   },
 })
 
-export const { setLocale, setTheme } = globalVarsSlice.actions
+export const { setLocale, setTheme, setUser, setMessage } = globalVarsSlice.actions
 export default globalVarsSlice.reducer

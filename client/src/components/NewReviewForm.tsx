@@ -34,7 +34,7 @@ export default function NewReviewForm() {
     addReview(newReview)
     reset()
     setResetTags(Math.random().toString())
-    navigate('/myreviews')
+    navigate('/')
   }
 
   const uniqueTags = [...new Set(reviews?.flatMap((review) => review.tags))]
@@ -104,7 +104,7 @@ export default function NewReviewForm() {
 
           <label>
             <div>Pic</div>
-            <PicUpload setPic={setPic}/>
+            <PicUpload setPic={setPic} />
           </label>
 
           <label>
