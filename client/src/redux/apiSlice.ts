@@ -21,7 +21,29 @@ export const dataApi = createApi({
       }),
       invalidatesTags: ['reviews'],
     }),
+    editReview: builder.mutation<string, IReview>({
+      query: (payload: IReview) => ({
+        url: '/reviews',
+        method: 'PUT',
+        body: payload,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }),
+      invalidatesTags: ['reviews'],
+    }),
+    deleteReview: builder.mutation<string, IReview>({
+      query: (payload: IReview) => ({
+        url: '/reviews',
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          title: payload.title,
+        },
+      }),
+      invalidatesTags: ['reviews'],
+    }),
   }),
 })
 
-export const { useAddReviewMutation, useGetReviewsQuery } = dataApi
+export const { useAddReviewMutation, useGetReviewsQuery, useDeleteReviewMutation, useEditReviewMutation } = dataApi

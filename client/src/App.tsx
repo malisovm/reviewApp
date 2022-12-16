@@ -1,6 +1,6 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import NewReviewForm from './components/NewReviewForm'
+import ReviewEditor from './pages/ReviewEditor'
 import Main from './pages/Main'
 import MyReviews from './pages/MyReviews'
 import { useAppSelector } from './redux/hooks'
@@ -21,7 +21,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/newreview" element={<NewReviewForm />} />
+        <Route path="/revieweditor" element={<ReviewEditor />} />
         <Route path="/myreviews" element={<MyReviews />} />
       </Routes>
     </div>

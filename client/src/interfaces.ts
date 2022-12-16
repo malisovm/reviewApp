@@ -1,4 +1,5 @@
 export interface IReview {
+  id: string
   title: string
   product: string
   group: string
