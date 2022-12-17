@@ -30,7 +30,7 @@ export default function PicUpload({ pic, setPic }: IProps) {
         setPic(data.url)
       })
       .catch((err) => console.log(err))
-  }, [acceptedFiles])
+  }, [acceptedFiles, pic, setPic])
 
   function removePic(e: React.MouseEvent) {
     e.preventDefault()

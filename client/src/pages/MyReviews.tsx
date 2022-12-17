@@ -21,7 +21,7 @@ export default function MyReviews() {
 
   function handleEdit(row: IReview) {
     navigate('/revieweditor', {
-      state: row
+      state: row,
     })
   }
 

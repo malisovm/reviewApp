@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { IReview } from '../interfaces'
+import { IReview, IUser } from '../interfaces'
 
 export const dataApi = createApi({
   reducerPath: 'dataApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/' }),
-  tagTypes: ['reviews'],
+  tagTypes: ['reviews', 'users'],
   endpoints: (builder) => ({
     getReviews: builder.query<IReview[], void>({
       query: (arg: void) => '/reviews',
@@ -43,7 +43,36 @@ export const dataApi = createApi({
       }),
       invalidatesTags: ['reviews'],
     }),
+    authenticateUser: builder.mutation<string, IUser>({
+      query: (payload: IUser) => ({
+        url: '/users/login',
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }),
+      invalidatesTags: ['reviews'],
+    }),
+    addUser: builder.mutation<string, IUser>({
+      query: (payload: IUser) => ({
+        url: '/users/newuser',
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }),
+      invalidatesTags: ['users'],
+    }),
   }),
 })
 
-export const { useAddReviewMutation, useGetReviewsQuery, useDeleteReviewMutation, useEditReviewMutation } = dataApi
+export const {
+  useAddReviewMutation,
+  useGetReviewsQuery,
+  useDeleteReviewMutation,
+  useEditReviewMutation,
+  useAddUserMutation,
+  useAuthenticateUserMutation,
+} = dataApi

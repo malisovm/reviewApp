@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { setTheme, setUser, setAlert } from '../redux/localSlice'
+import { initialUser } from '../redux/localSlice'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -48,7 +49,7 @@ export default function Navbar() {
             <button
               className="btn btn-primary"
               onClick={() => {
-                dispatch(setUser({ name: '', role: 'unauthorized' }))
+                dispatch(setUser(initialUser))
                 dispatch(setAlert({ text: 'You have logged out...', variant: 'alert-success' }))
                 navigate('/')
               }}

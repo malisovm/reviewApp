@@ -9,10 +9,12 @@ if (
   initialTheme = 'dark'
 else initialTheme = 'light'
 
+export const initialUser = { name: '', role: 'unauthorized' }
+
 const initialState = {
   theme: initialTheme,
   locale: 'en',
-  user: { name: '', role: 'unauthorized' },
+  user: initialUser,
   alert: { text: '', variant: '' },
 }
 

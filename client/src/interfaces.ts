@@ -1,5 +1,5 @@
 export interface IReview {
-  id: string
+  _id: string
   title: string
   product: string
   group: string
@@ -7,4 +7,12 @@ export interface IReview {
   text: string
   pic?: string
   rating: number
+  user: string
+}
+
+export interface IUser {
+  _id: string
+  name: string
+  password: string
+  role: string
 }
