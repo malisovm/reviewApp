@@ -38,10 +38,14 @@ export const dataApi = createApi({
         method: 'DELETE',
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
-          title: payload.title,
+          _id: payload._id,
         },
       }),
       invalidatesTags: ['reviews'],
+    }),
+    getUsers: builder.query<IUser[], void>({
+      query: (arg: void) => '/users',
+      providesTags: ['users'],
     }),
     authenticateUser: builder.mutation<string, IUser>({
       query: (payload: IUser) => ({

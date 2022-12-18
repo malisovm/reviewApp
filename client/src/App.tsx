@@ -7,6 +7,7 @@ import { useAppSelector } from './redux/hooks'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import Message from './components/Alert'
+import Userlist from './pages/Userlist'
 
 export default function App() {
   const theme = useAppSelector((state) => state.local.theme)
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/revieweditor" element={<ReviewEditor />} />
         <Route path="/myreviews" element={<MyReviews />} />
+        <Route path="/userlist" element={<Userlist />} />
       </Routes>
     </div>
   )

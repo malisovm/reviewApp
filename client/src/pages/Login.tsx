@@ -21,13 +21,13 @@ export default function Login() {
   } = useForm<IUser>()
 
   const onSubmit: SubmitHandler<IUser> = (results) => {
-    results._id = nanoid()
-    results.role = 'user'
     if (!createUser) {
       authUser(results)
         .unwrap()
-        .then((fulfulled) => {
-          dispatch(setAlert({ text: fulfulled, variant: 'alert-success' }))
+        .then((fulfulled: any) => {
+          console.log(fulfulled)
+          results.role = fulfulled.role
+          dispatch(setAlert({ text: fulfulled.message, variant: 'alert-success' }))
           dispatch(setUser(results))
           navigate('/')
         })
@@ -35,6 +35,8 @@ export default function Login() {
           dispatch(setAlert({ text: rejected.data, variant: 'alert-error' }))
         })
     } else if (createUser) {
+      results._id = nanoid()
+      results.role = 'user'
       addUser(results)
         .unwrap()
         .then((fulfulled) => {
@@ -56,7 +58,7 @@ export default function Login() {
           <input {...register('name', { required: true, minLength: 3, maxLength: 30 })} />
           {errors.name && <div className="text-red-700">Username must be 3-30 symbols long</div>}
           <input {...register('password', { required: true, minLength: 3, maxLength: 30 })} type="password" />
-          {errors.password && <div className="text-red-700">Username must be 3-30 symbols long</div>}
+          {errors.password && <div className="text-red-700">Password must be 3-30 symbols long</div>}
           <button type="submit" className="btn btn-primary">
             Submit
           </button>

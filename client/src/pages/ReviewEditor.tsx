@@ -11,6 +11,7 @@ import PicUpload from '../components/PicUpload'
 import MarkdownText from '../components/MarkdownText'
 import { setAlert } from '../redux/localSlice'
 import { nanoid } from '@reduxjs/toolkit'
+import { getDate } from '../utility'
 
 export default function ReviewEditor() {
   const { state: review } = useLocation()
@@ -40,6 +41,8 @@ export default function ReviewEditor() {
     newReview.text = text
     newReview.pic = pic
     newReview.user = user.name
+    newReview.date = getDate()
+    console.log('NEW REVIEW', newReview)
     if (!review) addReview(newReview)
     else editReview(newReview)
     reset()

@@ -15,9 +15,12 @@ import { useDeleteReviewMutation } from '../redux/apiSlice'
 
 export default function MyReviews() {
   const theme = useAppSelector((state) => state.local.theme)
+  const user = useAppSelector((state) => state.local.user)
   const navigate = useNavigate()
   const { data: reviews, isLoading, isError } = useGetReviewsQuery()
   const [deleteReview] = useDeleteReviewMutation()
+
+  const userReviews = reviews?.filter(review => review.user === user.name)
 
   function handleEdit(row: IReview) {
     navigate('/revieweditor', {
@@ -41,7 +44,7 @@ export default function MyReviews() {
 
   const columns = useMemo<MRT_ColumnDef<IReview>[]>(
     () => [
-      {
+       {
         accessorFn: (row) => row.title,
         id: 'title',
         header: 'Title',
@@ -90,22 +93,22 @@ export default function MyReviews() {
         id: 'actions',
         header: 'Actions',
         Header: <b className="text-primary">Actions</b>,
-      },
+      }
     ],
     [],
   )
 
-  if (isLoading) return <h1>Loading...</h1>
-  if (isError) return <h1 className="text-red-700">An error occured</h1>
+  if (isLoading) return <h1 className="text-xl">Loading...</h1>
+  if (isError) return <h1 className="text-red-700 text-xl">An error occured</h1>
 
   return (
     <div className="flex flex-col w-full mt-32">
       <>
-        <h1 className="place-self-center font-bold text-2xl mb-4">Your reviews</h1>
+        <h1 className="place-self-center font-bold text-xl mb-4">YOUR REVIEWS</h1>
         <div className="place-self-center w-auto mb-7">
           <ThemeProvider theme={muiTheme}>
             <CssBaseline />
-            <MaterialReactTable columns={columns} data={reviews as IReview[]} />
+            <MaterialReactTable columns={columns} data={userReviews as IReview[]} />
           </ThemeProvider>
         </div>
 

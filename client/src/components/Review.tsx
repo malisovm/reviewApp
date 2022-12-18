@@ -5,7 +5,7 @@ import { useAppSelector } from '../redux/hooks'
 import MarkdownText from './MarkdownText'
 
 interface IProps {
-  review: IReview,
+  review: IReview
   expanded: boolean
 }
 
@@ -13,7 +13,7 @@ export default function Review({ review, expanded }: IProps) {
   const theme = useAppSelector((state) => state.local.theme)
 
   return (
-      <>
+    <>
       <figure className="mt-2">
         <img src={review.pic} alt="" />
       </figure>
@@ -32,16 +32,23 @@ export default function Review({ review, expanded }: IProps) {
         <div>
           Verdict: <ScoreIndicator score={review.rating} />
         </div>
-        {expanded && <div className='my-3'><MarkdownText text={review.text} /></div>}
-        <div className="card-actions justify-end">
+        {expanded && (
+          <div className="my-3">
+            <MarkdownText text={review.text} />
+          </div>
+        )}
+        <>
+          <div className="text-right italic">{review.user}</div>
+          <div className="text-right italic text-sm">{review.date}</div>
+          <div className="card-actions justify-end">
           {review?.tags?.map((tag, index) => (
             <div key={index} className="badge badge-outline">
               {tag}
             </div>
           ))}
         </div>
+        </>
       </div>
-      </>
-
+    </>
   )
 }

@@ -20,6 +20,7 @@ interface IReview {
   text: string
   pic?: string
   rating: number
+  date: string
 }
 
 const usersScheme = new Schema({
@@ -40,10 +41,9 @@ const reviewsScheme = new Schema({
   pic: { type: String },
   rating: { type: Number, required: true },
   user: { type: String, required: true },
+  date: { type: String, required: true },
 })
 const Review = mongoose.model('Review', reviewsScheme)
-
-var reviews: IReview[] = []
 
 app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 const JSONParser = express.json({ type: 'application/json' })
@@ -60,13 +60,22 @@ mongoose.connect(
   },
 )
 
+app.get('/users', (_, res) => {
+  User.find({}, (err: any, docs: any) => {
+    if (err) {
+      console.log(err)
+      res.status(400).send(JSON.stringify(err))
+    } else res.send(docs)
+  })
+})
+
 app.post('/users/login', JSONParser, async (req, res) => {
   let user = new User(req.body)
   let existingUser = await User.findOne({
     name: { $eq: user.name },
   }).exec()
   if (existingUser && user.password === existingUser.password) {
-    res.status(200).send(JSON.stringify(`Logged in as ${user.name}`))
+    res.send(JSON.stringify({ message: `Logged in as ${user.name}`, role: existingUser.role }))
   } else if (!existingUser) {
     res.status(400).send(JSON.stringify(`The username doesn't exist`))
   } else if (user.password !== existingUser.password) {
@@ -83,9 +92,18 @@ app.post('/users/newuser', JSONParser, async (req, res) => {
     newUser.save().then(() => {
       let message = 'New account created'
       console.log(message)
-      res.send(JSON.stringify(message))
+      res.status(200).send(JSON.stringify(message))
     })
   } else res.status(400).send('Username already exists')
+})
+
+app.get('/reviews', (_, res) => {
+  Review.find({}, (err: any, docs: any) => {
+    if (err) {
+      console.log(err)
+      res.status(400).send(JSON.stringify(err))
+    } else res.send(docs)
+  })
 })
 
 app.post('/reviews', JSONParser, (req, res) => {
@@ -98,24 +116,36 @@ app.post('/reviews', JSONParser, (req, res) => {
 })
 
 app.put('/reviews', JSONParser, (req, res) => {
-  let updatedReview: IReview = req.body
-  reviews.forEach((review, index) => {
-    if (review._id === updatedReview._id) {
-      reviews[index] = updatedReview
+  let updReview: IReview = req.body
+  Review.findOneAndUpdate(
+    { _id: updReview._id },
+    {
+      title: updReview.title,
+      product: updReview.product,
+      group: updReview.group,
+      tags: updReview.tags,
+      text: updReview.text,
+      pic: updReview.pic,
+      rating: updReview.rating,
+    },
+    (err: any) => {
+      if (err) console.log(err)
+      else {
+        res.send('Review updated')
+        console.log('Review updated')
+      }
+    },
+  )
+})
+
+app.delete('/reviews', JSONParser, (req, res) => {
+  Review.findOneAndDelete({ _id: req.headers._id }, (err: any) => {
+    if (err) console.log(err)
+    else {
+      res.send('Review deleted')
+      console.log('Review deleted')
     }
   })
-  res.send(JSON.stringify('review edited'))
-})
-
-app.get('/reviews', (_, res) => {
-  res.send(reviews)
-})
-
-app.delete('/reviews', (req, res) => {
-  let _id = req.headers._id
-  let index = reviews.findIndex((review) => review._id === _id)
-  reviews.splice(index, 1)
-  res.send('review deleted')
 })
 
 app.get('*', (_, res) => {

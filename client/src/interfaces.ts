@@ -8,6 +8,7 @@ export interface IReview {
   pic?: string
   rating: number
   user: string
+  date: string
 }
 
 export interface IUser {
