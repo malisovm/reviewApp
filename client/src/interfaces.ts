@@ -6,9 +6,11 @@ export interface IReview {
   tags?: string[]
   text: string
   pic?: string
-  rating: number
+  verdict: number
   user: string
   date: string
+  ratings: {user: string, rate: number}[]
+  avgRate: number
 }
 
 export interface IUser {

@@ -13,8 +13,8 @@ export default function ReviewCard({ review }: IProps) {
       <Review review={review} expanded={false} />
       <div className="text-center mb-3">
         <Modal text="Read review">
-          <div className='text-left'>
-          <Review review={review} expanded={true} />
+          <div className="text-left">
+            <Review review={review} expanded={true} />
           </div>
         </Modal>
       </div>

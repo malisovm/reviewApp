@@ -79,4 +79,5 @@ export const {
   useEditReviewMutation,
   useAddUserMutation,
   useAuthenticateUserMutation,
+  useGetUsersQuery,
 } = dataApi

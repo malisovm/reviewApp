@@ -46,14 +46,16 @@ export default function Navbar() {
             >
               {user.name}
             </button>
-            {user.role === 'admin' && <button
-              className="btn btn-primary"
-              onClick={() => {
-                navigate('/userlist')
-              }}
-            >
-              Userlist
-            </button>}
+            {user.role === 'admin' && (
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  navigate('/userlist')
+                }}
+              >
+                Userlist
+              </button>
+            )}
             <button
               className="btn btn-primary"
               onClick={() => {

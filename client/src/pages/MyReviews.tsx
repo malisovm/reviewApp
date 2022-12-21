@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { useGetReviewsQuery } from '../redux/apiSlice'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -15,19 +15,23 @@ import { useDeleteReviewMutation } from '../redux/apiSlice'
 
 export default function MyReviews() {
   const theme = useAppSelector((state) => state.local.theme)
-  const user = useAppSelector((state) => state.local.user)
+  var user = useAppSelector((state) => state.local.user)
   const navigate = useNavigate()
+  const { state: adminViewUser } = useLocation()
+  if (adminViewUser) user = adminViewUser
   const { data: reviews, isLoading, isError } = useGetReviewsQuery()
   const [deleteReview] = useDeleteReviewMutation()
 
-  const userReviews = reviews?.filter(review => review.user === user.name)
+  const userReviews = reviews?.filter((review) => review.user === user.name)
 
+  function handleCreate() {
+    navigate('/revieweditor', { state: { user: user } })
+  }
   function handleEdit(row: IReview) {
     navigate('/revieweditor', {
-      state: row,
+      state: { review: row, user: user },
     })
   }
-
   function handleDelete(row: IReview) {
     deleteReview(row)
   }
@@ -44,7 +48,7 @@ export default function MyReviews() {
 
   const columns = useMemo<MRT_ColumnDef<IReview>[]>(
     () => [
-       {
+      {
         accessorFn: (row) => row.title,
         id: 'title',
         header: 'Title',
@@ -68,10 +72,16 @@ export default function MyReviews() {
         Header: <b className="text-primary">Product</b>,
       },
       {
-        accessorFn: (row) => row.rating,
-        id: 'rating',
-        header: 'Rating',
-        Header: <b className="text-primary">Rating</b>,
+        accessorFn: (row) => row.verdict,
+        id: 'verdict',
+        header: 'Verdict',
+        Header: <b className="text-primary">Verdict</b>,
+      },
+      {
+        accessorFn: (row) => row.avgRate,
+        id: 'average rate',
+        header: 'Average rate',
+        Header: <b className="text-primary">Avg. rating</b>,
       },
       {
         accessorFn: (row) => (
@@ -93,34 +103,29 @@ export default function MyReviews() {
         id: 'actions',
         header: 'Actions',
         Header: <b className="text-primary">Actions</b>,
-      }
+      },
     ],
     [],
   )
 
-  if (isLoading) return <h1 className="text-xl">Loading...</h1>
+  if (isLoading) return <button className="btn loading">Loading</button>
   if (isError) return <h1 className="text-red-700 text-xl">An error occured</h1>
 
   return (
     <div className="flex flex-col w-full mt-32">
-      <>
-        <h1 className="place-self-center font-bold text-xl mb-4">YOUR REVIEWS</h1>
-        <div className="place-self-center w-auto mb-7">
-          <ThemeProvider theme={muiTheme}>
-            <CssBaseline />
-            <MaterialReactTable columns={columns} data={userReviews as IReview[]} />
-          </ThemeProvider>
-        </div>
+      <h1 className="place-self-center font-bold text-xl mb-4 uppercase">
+        {!adminViewUser ? 'Your reviews' : `${user.name} reviews`}
+      </h1>
+      <div className="place-self-center w-auto mb-7">
+        <ThemeProvider theme={muiTheme}>
+          <CssBaseline />
+          <MaterialReactTable columns={columns} data={userReviews as IReview[]} />
+        </ThemeProvider>
+      </div>
 
-        <button
-          className="btn btn-primary place-self-center"
-          onClick={() => {
-            navigate('/revieweditor')
-          }}
-        >
-          Add new review
-        </button>
-      </>
+      <button className="btn btn-primary place-self-center" onClick={handleCreate}>
+        Add new review
+      </button>
     </div>
   )
 }

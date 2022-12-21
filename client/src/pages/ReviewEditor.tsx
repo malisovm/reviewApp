@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { IReview } from '../interfaces'
 import { useAddReviewMutation, useGetReviewsQuery, useEditReviewMutation } from '../redux/apiSlice'
-import { capitalize } from '../utility'
 import Autocomplete from '@mui/joy/Autocomplete'
 import { useNavigate, useLocation } from 'react-router-dom'
 import MDEditor from '@uiw/react-md-editor'
@@ -14,7 +13,10 @@ import { nanoid } from '@reduxjs/toolkit'
 import { getDate } from '../utility'
 
 export default function ReviewEditor() {
-  const { state: review } = useLocation()
+  const { state } = useLocation()
+  const user = state.user
+  var review: IReview | undefined = undefined
+  if (state && state.review) review = state.review
   const [addReview] = useAddReviewMutation()
   const [editReview] = useEditReviewMutation()
   const { data: reviews } = useGetReviewsQuery()
@@ -23,7 +25,6 @@ export default function ReviewEditor() {
   const navigate = useNavigate()
   const [text, setText] = useState(review ? review.text : `**Write your review here** (*Markdown syntax supported*)`)
   const theme = useAppSelector((state) => state.local.theme)
-  const user = useAppSelector((state) => state.local.user)
   const [pic, setPic] = useState<string>()
   const dispatch = useAppDispatch()
 
@@ -35,25 +36,30 @@ export default function ReviewEditor() {
   } = useForm<IReview>()
 
   const onSubmit: SubmitHandler<IReview> = (newReview) => {
-    if (review) newReview._id = review._id
-    else newReview._id = nanoid()
     newReview.tags = newReviewTags
     newReview.text = text
     newReview.pic = pic
     newReview.user = user.name
-    newReview.date = getDate()
-    console.log('NEW REVIEW', newReview)
-    if (!review) addReview(newReview)
-    else editReview(newReview)
+    if (review) {
+      newReview._id = review._id
+      newReview.ratings = review.ratings
+      editReview(newReview)
+    } else if (!review) {
+      newReview._id = nanoid()
+      newReview.date = getDate()
+      newReview.ratings = []
+      newReview.avgRate = 0
+      addReview(newReview)
+    }
     reset()
     setResetTags(Math.random().toString())
-    dispatch(setAlert({ text: 'New review added', variant: 'alert-success' }))
-    navigate('/myreviews')
+    dispatch(setAlert({ text: !review ? 'New review added' : 'Review updated', variant: 'alert-success' }))
+    navigate('/myreviews', { state: user })
   }
 
   const uniqueTags = [...new Set(reviews?.flatMap((review) => review.tags))]
   const textInputs = ['title', 'product']
-  const selectInputs = { group: ['Books', 'Movies', 'Games'], rating: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
+  const selectInputs = { group: ['Books', 'Movies', 'Games'], verdict: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
 
   return (
     <div className="flex justify-center mt-32">
@@ -64,7 +70,7 @@ export default function ReviewEditor() {
           </header>
           {textInputs.map((input, index) => (
             <label key={index}>
-              <div className="mb-1">{capitalize(input)}</div>
+              <div className="mb-1 capitalize">{input}</div>
               <div>
                 <input
                   placeholder={`Enter ${input}`}
@@ -86,9 +92,9 @@ export default function ReviewEditor() {
 
           {Object.entries(selectInputs).map(([selectInput, inputOptions]) => (
             <label key={selectInput}>
-              <div className="mb-1">{capitalize(selectInput)}</div>
+              <div className="mb-1 capitalize">{selectInput}</div>
               <select
-                defaultValue={review ? (selectInput === 'group' ? review.group : review.rating) : 'default'}
+                defaultValue={review ? (selectInput === 'group' ? review.group : review.verdict) : 'default'}
                 className="border rounded p-2 w-full dark:bg-gray-800"
                 {...register(selectInput as keyof IReview, { required: true, pattern: /^(?!default$)/ })}
               >

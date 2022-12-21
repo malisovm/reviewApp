@@ -12,26 +12,36 @@ mongoose.set('strictQuery', false)
 const PORT = process.env.PORT || 3001
 
 interface IReview {
-  _id?: string
+  _id: string
   title: string
   product: string
   group: string
   tags?: string[]
   text: string
   pic?: string
-  rating: number
+  verdict: number
+  user: string
   date: string
+  ratings: { user: string; rate: number }[]
+  avgRate?: number
 }
 
-const usersScheme = new Schema({
+interface IUser {
+  _id: string
+  name: string
+  password: string
+  role: string
+}
+
+const usersScheme = new Schema<IUser>({
   _id: { type: String, required: true },
   name: { type: String, required: true },
   password: { type: String, required: true },
   role: { type: String, required: true },
 })
-const User = mongoose.model('User', usersScheme)
+const User = mongoose.model<IUser>('User', usersScheme)
 
-const reviewsScheme = new Schema({
+const reviewsScheme = new Schema<IReview>({
   _id: { type: String, required: true },
   title: { type: String, required: true },
   product: { type: String, required: true },
@@ -39,17 +49,28 @@ const reviewsScheme = new Schema({
   tags: [String],
   text: { type: String, required: true },
   pic: { type: String },
-  rating: { type: Number, required: true },
+  verdict: { type: Number, required: true },
   user: { type: String, required: true },
   date: { type: String, required: true },
+  ratings: [{ type: { user: String, rate: Number }, required: true }],
+  avgRate: { type: Number, required: true },
 })
-const Review = mongoose.model('Review', reviewsScheme)
+const Review = mongoose.model<IReview>('Review', reviewsScheme)
+
+function averageRate(userRates: { user: string; rate: number }[]) {
+  if (userRates.length === 0) return 0
+  let sum = 0
+  for (const userRate of userRates) {
+    sum += userRate.rate
+  }
+  return sum / userRates.length
+}
 
 app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 const JSONParser = express.json({ type: 'application/json' })
 mongoose.connect(
-  //'mongodb+srv://user12345:12345@cluster1.mgmwwie.mongodb.net/manageUsers',
-  'mongodb://localhost:27017/',
+  'mongodb+srv://user12345:12345@cluster1.mgmwwie.mongodb.net/ratingApp',
+  //'mongodb://localhost:27017/',
   { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions,
   (err) => {
     if (err) console.log(err)
@@ -109,7 +130,7 @@ app.get('/reviews', (_, res) => {
 app.post('/reviews', JSONParser, (req, res) => {
   let newReview = new Review(req.body)
   newReview.save().then(() => {
-    let message = 'new review posted'
+    let message = 'New review posted'
     console.log(message)
     res.send(JSON.stringify(message))
   })
@@ -117,6 +138,7 @@ app.post('/reviews', JSONParser, (req, res) => {
 
 app.put('/reviews', JSONParser, (req, res) => {
   let updReview: IReview = req.body
+  console.log(updReview)
   Review.findOneAndUpdate(
     { _id: updReview._id },
     {
@@ -126,7 +148,9 @@ app.put('/reviews', JSONParser, (req, res) => {
       tags: updReview.tags,
       text: updReview.text,
       pic: updReview.pic,
-      rating: updReview.rating,
+      verdict: updReview.verdict,
+      ratings: updReview.ratings,
+      avgRate: averageRate(updReview.ratings),
     },
     (err: any) => {
       if (err) console.log(err)
