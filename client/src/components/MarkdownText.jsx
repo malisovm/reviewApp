@@ -4,7 +4,7 @@ import { useAppSelector } from '../redux/hooks'
 
 export default function MarkdownText({ text }) {
   const theme = useAppSelector((state) => state.local.theme)
-  let bgColor = theme === 'dark' ? '#2A303C' : 'white'
+  let bgColor = theme === 'dark' ? '#27272A' : 'white'
   let textColor = theme === 'dark' ? 'white' : 'black'
 
   return (

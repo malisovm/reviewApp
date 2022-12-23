@@ -52,10 +52,10 @@ export default function PicUpload({ pic, setPic }: IProps) {
       {!url && (
         <div
           {...getRootProps({ className: 'dropzone' })}
-          className="p-3 py-5 bg-gray-200 dark:bg-gray-800 border rounded-xl"
+          className="p-3 py-5 bg-zinc-200 dark:bg-zinc-800 border rounded"
         >
           <input {...getInputProps()} />
-          <div>Drag 'n' drop an image file here</div>
+          <div className='text-center'>Drag 'n' drop an image file here</div>
         </div>
       )}
     </div>

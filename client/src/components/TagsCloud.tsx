@@ -28,7 +28,7 @@ export default function TagsCloud() {
   if (tags) uniqueTagsAndCounts = countUniqueTags(tags.filter((tag) => tag !== undefined) as string[])
 
   return (
-    <div className="bg-gray-800 dark:bg-white w-56 h-56 flex justify-center items-center rounded-xl">
+    <div className="bg-zinc-800 dark:bg-stone-200 w-56 h-56 flex justify-center items-center rounded-xl">
       {tags && tags.length > 0 ? (
         <TagCloud
           minSize={12}

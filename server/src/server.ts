@@ -23,6 +23,7 @@ interface IReview {
   user: string
   date: string
   ratings: { user: string; rate: number }[]
+  likes: string[]
   avgRate?: number
 }
 
@@ -31,6 +32,7 @@ interface IUser {
   name: string
   password: string
   role: string
+  likes: number
 }
 
 const usersScheme = new Schema<IUser>({
@@ -38,6 +40,7 @@ const usersScheme = new Schema<IUser>({
   name: { type: String, required: true },
   password: { type: String, required: true },
   role: { type: String, required: true },
+  likes: { type: Number, required: true, default: 0 },
 })
 const User = mongoose.model<IUser>('User', usersScheme)
 
@@ -54,6 +57,7 @@ const reviewsScheme = new Schema<IReview>({
   date: { type: String, required: true },
   ratings: [{ type: { user: String, rate: Number }, required: true }],
   avgRate: { type: Number, required: true },
+  likes: { type: [String], required: true },
 })
 const Review = mongoose.model<IReview>('Review', reviewsScheme)
 
@@ -64,6 +68,15 @@ function averageRate(userRates: { user: string; rate: number }[]) {
     sum += userRate.rate
   }
   return sum / userRates.length
+}
+
+async function updateLikesCount(user: string) {
+  let sum = 0
+  let reviews: IReview[] = await Review.find({ user: user })
+  for (const review of reviews) {
+    sum += review.likes.length
+  }
+  return sum
 }
 
 app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
@@ -96,7 +109,7 @@ app.post('/users/login', JSONParser, async (req, res) => {
     name: { $eq: user.name },
   }).exec()
   if (existingUser && user.password === existingUser.password) {
-    res.send(JSON.stringify({ message: `Logged in as ${user.name}`, role: existingUser.role }))
+    res.send(JSON.stringify({ message: `Logged in as ${user.name}`, role: existingUser.role, likes: existingUser.likes }))
   } else if (!existingUser) {
     res.status(400).send(JSON.stringify(`The username doesn't exist`))
   } else if (user.password !== existingUser.password) {
@@ -136,7 +149,7 @@ app.post('/reviews', JSONParser, (req, res) => {
   })
 })
 
-app.put('/reviews', JSONParser, (req, res) => {
+app.put('/reviews', JSONParser, async (req, res) => {
   let updReview: IReview = req.body
   console.log(updReview)
   Review.findOneAndUpdate(
@@ -151,6 +164,7 @@ app.put('/reviews', JSONParser, (req, res) => {
       verdict: updReview.verdict,
       ratings: updReview.ratings,
       avgRate: averageRate(updReview.ratings),
+      likes: updReview.likes,
     },
     (err: any) => {
       if (err) console.log(err)
@@ -158,6 +172,16 @@ app.put('/reviews', JSONParser, (req, res) => {
         res.send('Review updated')
         console.log('Review updated')
       }
+    },
+  )
+  User.findOneAndUpdate(
+    { name: updReview.user },
+    {
+      likes: await updateLikesCount(updReview.user),
+    },
+    (err: any, docs: any) => {
+      if (err) console.log(err)
+      else console.log('User like count updated')
     },
   )
 })

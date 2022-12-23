@@ -9,7 +9,7 @@ interface IProps {
 
 export default function ReviewCard({ review }: IProps) {
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
+    <div className="card w-96 bg-zinc-100 dark:bg-zinc-800 shadow-xl">
       <Review review={review} expanded={false} />
       <div className="text-center mb-3">
         <Modal text="Read review">

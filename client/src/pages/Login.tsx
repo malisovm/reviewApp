@@ -24,10 +24,10 @@ export default function Login() {
     if (!createUser) {
       authUser(results)
         .unwrap()
-        .then((fulfulled: any) => {
-          console.log(fulfulled)
-          results.role = fulfulled.role
-          dispatch(setAlert({ text: fulfulled.message, variant: 'alert-success' }))
+        .then((fulfilled: any) => {
+          results.role = fulfilled.role
+          results.likes = fulfilled.likes
+          dispatch(setAlert({ text: fulfilled.message, variant: 'alert-success' }))
           dispatch(setUser(results))
           navigate('/')
         })
@@ -52,7 +52,7 @@ export default function Login() {
 
   return (
     <div className="flex justify-center mt-32">
-      <section className="bg-white dark:bg-gray-900 rounded-xl w-64 max-w-md text-center">
+      <section className="bg-white dark:bg-zinc-900 rounded-xl w-64 max-w-md text-center">
         <form className="p-6 flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
           <h1 className="font-bold text-xl mb-2">Log in</h1>
           <input {...register('name', { required: true, minLength: 3, maxLength: 30 })} />

@@ -3,8 +3,6 @@ import { useGetUsersQuery } from '../redux/apiSlice'
 import { useNavigate } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
 import { useAppSelector } from '../redux/hooks'
 import { IUser } from '../interfaces'
 
@@ -17,16 +15,6 @@ export default function Userlist() {
   useEffect(() => {
     if (user.role !== 'admin') navigate('/')
   }, [user])
-
-  const muiTheme = React.useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: theme as 'light' | 'dark',
-        },
-      }),
-    [theme],
-  )
 
   function handleClick(user: IUser) {
     navigate('/myreviews', {
@@ -55,6 +43,11 @@ export default function Userlist() {
         header: 'Role',
         Header: <b className="text-primary">Role</b>,
       },
+      {
+        accessorFn: (row) => row.likes,
+        header: 'Likes',
+        Header: <b className="text-primary">Likes</b>,
+      },
     ],
     [],
   )
@@ -66,10 +59,7 @@ export default function Userlist() {
     <div className="flex flex-col w-full mt-32">
       <h1 className="place-self-center font-bold text-xl mb-5 uppercase">Admin access to users</h1>
       <div className="place-self-center w-auto mb-7">
-        <ThemeProvider theme={muiTheme}>
-          <CssBaseline />
           <MaterialReactTable columns={columns} data={users as IUser[]} />
-        </ThemeProvider>
       </div>
     </div>
   )

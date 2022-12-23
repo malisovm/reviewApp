@@ -3,8 +3,6 @@ import { useGetReviewsQuery } from '../redux/apiSlice'
 import { useNavigate, useLocation } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
 import { useAppSelector } from '../redux/hooks'
 import { IReview } from '../interfaces'
 import Modal from '../components/Modal'
@@ -36,17 +34,7 @@ export default function MyReviews() {
     deleteReview(row)
   }
 
-  const muiTheme = React.useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: theme as 'light' | 'dark',
-        },
-      }),
-    [theme],
-  )
-
-  const columns = useMemo<MRT_ColumnDef<IReview>[]>(
+   const columns = useMemo<MRT_ColumnDef<IReview>[]>(
     () => [
       {
         accessorFn: (row) => row.title,
@@ -117,10 +105,7 @@ export default function MyReviews() {
         {!adminViewUser ? 'Your reviews' : `${user.name} reviews`}
       </h1>
       <div className="place-self-center w-auto mb-7">
-        <ThemeProvider theme={muiTheme}>
-          <CssBaseline />
-          <MaterialReactTable columns={columns} data={userReviews as IReview[]} />
-        </ThemeProvider>
+           <MaterialReactTable columns={columns} data={userReviews as IReview[]} />
       </div>
 
       <button className="btn btn-primary place-self-center" onClick={handleCreate}>

@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ScoreIndicator from './ScoreIndicator'
 import { IReview } from '../interfaces'
 import { useAppSelector } from '../redux/hooks'
 import MarkdownText from './MarkdownText'
 import { Rating } from 'react-simple-star-rating'
 import { useEditReviewMutation } from '../redux/apiSlice'
+import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 
 interface IProps {
   review: IReview
@@ -16,7 +17,7 @@ export default function Review({ review, expanded }: IProps) {
   const [editReview] = useEditReviewMutation()
   const existingRating = review.ratings.find((rating) => rating.user === user.name)
 
-  const handleRating = (inputRate: number) => {
+  function handleRating(inputRate: number) {
     let inputRating = { user: user.name, rate: inputRate }
     let newReview: IReview = JSON.parse(JSON.stringify(review))
     let exsRatingInNewRev = newReview.ratings.find((rating) => rating.user === user.name)
@@ -25,8 +26,16 @@ export default function Review({ review, expanded }: IProps) {
     editReview(newReview)
   }
 
+  function handleLike() {
+    let newReview: IReview = JSON.parse(JSON.stringify(review))
+    let exsLikeIndex = newReview.likes.findIndex((like) => like === user.name)
+    if (exsLikeIndex >= 0) newReview.likes.splice(exsLikeIndex, 1)
+    else newReview.likes.push(user.name)
+    editReview(newReview)
+  }
+
   return (
-    <article>
+    <article className=' bg-zinc-100 dark:bg-zinc-800 '>
       <figure className="mt-2">
         <img src={review.pic} alt="" />
       </figure>
@@ -43,15 +52,9 @@ export default function Review({ review, expanded }: IProps) {
               {review.group}
             </span>
           </span>
-          {review.avgRate>0 && !expanded && (
+          {review.avgRate > 0 && !expanded && (
             <div className="text-right">
-              <Rating
-                initialValue={review.avgRate}
-                allowFraction
-                readonly
-                SVGclassName="display: inline"
-                size={20}
-              />
+              <Rating initialValue={review.avgRate} allowFraction readonly SVGclassName="display: inline" size={20} />
             </div>
           )}
         </h2>
@@ -69,7 +72,7 @@ export default function Review({ review, expanded }: IProps) {
         )}
       </main>
 
-      <footer className='mr-5 mb-2'>
+      <footer className="mr-5 mb-2">
         <div className="text-right italic">{review.user}</div>
         <div className="text-right italic text-sm mb-3">{review.date}</div>
         <div className="card-actions justify-end mb-3">
@@ -80,12 +83,26 @@ export default function Review({ review, expanded }: IProps) {
           ))}
         </div>
         {expanded && user.name && review.user !== user.name && (
-          <div className="text-right">
-            Your rate:
-            <div>
-              <Rating initialValue={existingRating && existingRating.rate ? existingRating.rate : 0} onClick={handleRating} SVGclassName="display: inline" size={20} transition />
+          <section>
+            <div className="text-right">
+              <div>
+                <button onClick={handleLike}>
+                  <ThumbUpIcon className={review.likes.includes(user.name) ? 'text-primary' : 'text-zinc-200'} />
+                </button>{' '}
+                {review.likes.length}
+              </div>
+              Your rate:
+              <div>
+                <Rating
+                  initialValue={existingRating && existingRating.rate ? existingRating.rate : 0}
+                  onClick={handleRating}
+                  SVGclassName="display: inline"
+                  size={20}
+                  fillColor="#4506CB"
+                />
+              </div>
             </div>
-          </div>
+          </section>
         )}
         {expanded && (
           <div className="text-right">
@@ -96,6 +113,7 @@ export default function Review({ review, expanded }: IProps) {
                   initialValue={review.avgRate}
                   allowFraction
                   readonly
+                  fillColor="#4506CB"
                   SVGclassName="display: inline"
                   size={20}
                 />

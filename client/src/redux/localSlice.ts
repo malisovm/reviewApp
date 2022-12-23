@@ -9,7 +9,7 @@ if (
   initialTheme = 'dark'
 else initialTheme = 'light'
 
-export const initialUser = { name: '', role: 'unauthorized' }
+export const initialUser = { name: '', role: 'unauthorized', likes: 0 }
 
 const initialState = {
   theme: initialTheme,
@@ -28,7 +28,7 @@ const localSlice = createSlice({
     setTheme(state, action: PayloadAction<string>) {
       state.theme = action.payload
     },
-    setUser(state, action: PayloadAction<{ name: string; role: string }>) {
+    setUser(state, action: PayloadAction<{ name: string; role: string, likes: number }>) {
       state.user = action.payload
     },
     setAlert(state, action: PayloadAction<{ text: string; variant: string }>) {

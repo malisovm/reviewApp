@@ -3,11 +3,15 @@
 @tailwind utilities;
 
 .dark {
-  @apply bg-gray-800 text-zinc-50;
+  @apply bg-zinc-900 text-zinc-50;
+}
+
+.light {
+  @apply bg-stone-200 text-black;
 }
 
 input {
-  @apply m-1 p-1 dark:bg-slate-800 border-2 rounded;
+  @apply m-1 p-1 dark:bg-zinc-800 border-2 rounded;
 }
 
 h3 {

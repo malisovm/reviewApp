@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { setTheme, setUser, setAlert } from '../redux/localSlice'
 import { initialUser } from '../redux/localSlice'
+import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -17,7 +18,7 @@ export default function Navbar() {
   }
 
   return (
-    <div className="flex h-16 mb-3 justify-between items-center bg-gray-900 dark:bg-gray-200">
+    <div className="flex h-16 mb-3 justify-between items-center bg-zinc-900 dark:bg-stone-200">
       <button
         className="italic text-2xl m-3 text-primary font-bold"
         onClick={() => {
@@ -44,7 +45,7 @@ export default function Navbar() {
                 navigate('/myreviews')
               }}
             >
-              {user.name}
+              <span>{user.name} &nbsp; <ThumbUpIcon fontSize='small'/> {user.likes}</span>
             </button>
             {user.role === 'admin' && (
               <button

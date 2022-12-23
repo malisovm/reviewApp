@@ -11,6 +11,7 @@ export interface IReview {
   date: string
   ratings: {user: string, rate: number}[]
   avgRate: number
+  likes: string[]
 }
 
 export interface IUser {
@@ -18,4 +19,5 @@ export interface IUser {
   name: string
   password: string
   role: string
+  likes: number
 }

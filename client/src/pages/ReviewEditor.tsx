@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { IReview } from '../interfaces'
 import { useAddReviewMutation, useGetReviewsQuery, useEditReviewMutation } from '../redux/apiSlice'
-import Autocomplete from '@mui/joy/Autocomplete'
 import { useNavigate, useLocation } from 'react-router-dom'
 import MDEditor from '@uiw/react-md-editor'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
@@ -11,6 +10,9 @@ import MarkdownText from '../components/MarkdownText'
 import { setAlert } from '../redux/localSlice'
 import { nanoid } from '@reduxjs/toolkit'
 import { getDate } from '../utility'
+import Chip from '@mui/material/Chip'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
 
 export default function ReviewEditor() {
   const { state } = useLocation()
@@ -49,6 +51,7 @@ export default function ReviewEditor() {
       newReview.date = getDate()
       newReview.ratings = []
       newReview.avgRate = 0
+      newReview.likes = []
       addReview(newReview)
     }
     reset()
@@ -63,7 +66,7 @@ export default function ReviewEditor() {
 
   return (
     <div className="flex justify-center mt-32">
-      <section className="bg-white dark:bg-gray-900 rounded-xl w-5/6 max-w-md">
+      <section className="bg-white dark:bg-zinc-900 rounded-xl w-5/6 max-w-md">
         <form className="p-6 flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
           <header className="text-center font-bold text-2xl mb-3">
             {!review ? 'Create new review' : 'Edit review'}
@@ -95,7 +98,7 @@ export default function ReviewEditor() {
               <div className="mb-1 capitalize">{selectInput}</div>
               <select
                 defaultValue={review ? (selectInput === 'group' ? review.group : review.verdict) : 'default'}
-                className="border rounded p-2 w-full dark:bg-gray-800"
+                className="border rounded p-2 w-full dark:bg-zinc-800"
                 {...register(selectInput as keyof IReview, { required: true, pattern: /^(?!default$)/ })}
               >
                 <option value="default" disabled>
@@ -111,12 +114,13 @@ export default function ReviewEditor() {
 
           <label>
             <div className="mb-1">Text</div>
-            <div className="container" data-color-mode={theme}>
-              <MDEditor
+            <div className="container bg-zinc-800" data-color-mode={theme}>
+              <MDEditor className='bg-zinc-800'
                 value={text}
                 //@ts-ignore
                 onChange={setText}
                 preview="edit"
+                fill='red'
               />
               <details className="border rounded mt-1 p-1">
                 <summary>See preview</summary>
@@ -134,17 +138,16 @@ export default function ReviewEditor() {
             <div className="mb-1">Tags</div>
             <Autocomplete
               multiple
-              onChange={(_, value) => {
-                let tags = value as string[]
-                setNewReviewTags(tags)
-              }}
-              freeSolo
+              options={uniqueTags as string[]}
               defaultValue={review ? review.tags : undefined}
-              autoHighlight
-              blurOnSelect
-              options={uniqueTags}
-              placeholder="Add tag"
-              renderOption={(props, option) => <li {...props}>{`+${option}`}</li>}
+              freeSolo
+              onChange={(_, values)=>{setNewReviewTags(values)}}
+              renderTags={(value: readonly string[], getTagProps) =>
+                value.map((option: string, index: number) => (
+                  <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                ))
+              }
+              renderInput={(params) => <TextField {...params} variant="filled" placeholder="Enter tags" />}
               key={resetTags}
             />
           </label>

@@ -12,13 +12,13 @@ export default function Modal({ children, text }: IProps) {
   let id = nanoid()
 
   return (
-    <div className="cursor-pointer">
-      <label htmlFor={id} className={`btn`}>
+    <div className="cursor-pointer ">
+      <label htmlFor={id} className="btn">
         {text}
       </label>
       <input type="checkbox" id={id} className="modal-toggle" />
-      <label htmlFor={id} className="modal cursor-pointer">
-        <label className="modal-box relative" htmlFor="">
+      <label htmlFor={id} className="modal cursor-pointer ">
+        <label className="modal-box relative bg-zinc-100 dark:bg-zinc-800" htmlFor="">
           {children}
         </label>
       </label>
