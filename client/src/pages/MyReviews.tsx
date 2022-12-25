@@ -97,11 +97,11 @@ export default function MyReviews() {
   )
 
   if (isLoading) return <button className="btn loading">Loading</button>
-  if (isError) return <h1 className="text-red-700 text-xl">An error occured</h1>
+  if (isError) return <h1 className="text-red-700">An error occured</h1>
 
   return (
     <div className="flex flex-col w-full mt-32">
-      <h1 className="place-self-center font-bold text-xl mb-4 uppercase">
+      <h1 className="place-self-center">
         {!adminViewUser ? 'Your reviews' : `${user.name} reviews`}
       </h1>
       <div className="place-self-center w-auto mb-7">

@@ -2,15 +2,25 @@ import React from 'react'
 import { TagCloud } from 'react-tagcloud'
 import { useAppSelector } from '../redux/hooks'
 import { useGetReviewsQuery } from '../redux/apiSlice'
+import { IReview } from '../interfaces'
 
-export default function TagsCloud() {
+interface ITag {
+  value: string
+  count: number
+}
+
+interface IProps {
+  setFilter: (filter: string) => void
+  reviews: IReview[] | undefined
+}
+
+function TagsCloud({ setFilter, reviews }: IProps) {
   const theme = useAppSelector((state) => state.local.theme)
-  const { data: reviews } = useGetReviewsQuery()
   const tags = reviews?.flatMap((review) => review.tags)
 
-  // TagCloud API. tags = [ {value: string, count: number}, ...]
+  // TagCloud API; tags = [ {value: string, count: number}, ...]
 
-  function countUniqueTags(tags: string[]): { value: string; count: number }[] {
+  function countUniqueTags(tags: string[]): ITag[] {
     const counts: { [tag: string]: number } = {}
     for (const tag of tags) {
       if (counts[tag]) {
@@ -24,7 +34,7 @@ export default function TagsCloud() {
     return result
   }
 
-  var uniqueTagsAndCounts: { value: string; count: number }[] = []
+  var uniqueTagsAndCounts: ITag[] = []
   if (tags) uniqueTagsAndCounts = countUniqueTags(tags.filter((tag) => tag !== undefined) as string[])
 
   return (
@@ -36,6 +46,7 @@ export default function TagsCloud() {
           tag-cloud="bg-white"
           tags={uniqueTagsAndCounts}
           colorOptions={{ hue: 'blue', luminosity: theme === 'dark' ? 'bright' : 'light' }}
+          onClick={(tag: ITag) => setFilter(tag.value)}
         />
       ) : (
         <span className="text-white dark:text-black">No tags yet</span>
@@ -43,3 +54,5 @@ export default function TagsCloud() {
     </div>
   )
 }
+
+export default React.memo(TagsCloud)

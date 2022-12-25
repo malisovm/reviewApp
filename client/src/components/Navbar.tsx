@@ -45,7 +45,7 @@ export default function Navbar() {
                 navigate('/myreviews')
               }}
             >
-              <span>{user.name} &nbsp; <ThumbUpIcon fontSize='small'/> {user.likes}</span>
+              <span>{user.name} &nbsp; <ThumbUpIcon fontSize='small'/>{user.likes}</span>
             </button>
             {user.role === 'admin' && (
               <button

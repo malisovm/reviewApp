@@ -3,6 +3,7 @@ import { dirname } from 'path'
 import express, { Request, Response } from 'express'
 import * as path from 'path'
 import mongoose, { ConnectOptions } from 'mongoose'
+import { getDate } from './utility.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -25,6 +26,7 @@ interface IReview {
   ratings: { user: string; rate: number }[]
   likes: string[]
   avgRate?: number
+  comments: { user: string; text: string }[]
 }
 
 interface IUser {
@@ -36,16 +38,14 @@ interface IUser {
 }
 
 const usersScheme = new Schema<IUser>({
-  _id: { type: String, required: true },
   name: { type: String, required: true },
   password: { type: String, required: true },
-  role: { type: String, required: true },
+  role: { type: String, required: true, default: 'user' },
   likes: { type: Number, required: true, default: 0 },
 })
 const User = mongoose.model<IUser>('User', usersScheme)
 
 const reviewsScheme = new Schema<IReview>({
-  _id: { type: String, required: true },
   title: { type: String, required: true },
   product: { type: String, required: true },
   group: { type: String, required: true },
@@ -54,10 +54,11 @@ const reviewsScheme = new Schema<IReview>({
   pic: { type: String },
   verdict: { type: Number, required: true },
   user: { type: String, required: true },
-  date: { type: String, required: true },
-  ratings: [{ type: { user: String, rate: Number }, required: true }],
-  avgRate: { type: Number, required: true },
-  likes: { type: [String], required: true },
+  date: { type: String, required: true, default: getDate() },
+  ratings: [{ type: { user: String, rate: Number }, required: true, default: [] }],
+  avgRate: { type: Number, required: true, default: 0 },
+  likes: { type: [String], required: true, default: [] },
+  comments: [{ type: { user: String, text: String }, required: true, default: [] }],
 })
 const Review = mongoose.model<IReview>('Review', reviewsScheme)
 
@@ -109,7 +110,9 @@ app.post('/users/login', JSONParser, async (req, res) => {
     name: { $eq: user.name },
   }).exec()
   if (existingUser && user.password === existingUser.password) {
-    res.send(JSON.stringify({ message: `Logged in as ${user.name}`, role: existingUser.role, likes: existingUser.likes }))
+    res.send(
+      JSON.stringify({ message: `Logged in as ${user.name}`, role: existingUser.role, likes: existingUser.likes }),
+    )
   } else if (!existingUser) {
     res.status(400).send(JSON.stringify(`The username doesn't exist`))
   } else if (user.password !== existingUser.password) {
@@ -165,6 +168,7 @@ app.put('/reviews', JSONParser, async (req, res) => {
       ratings: updReview.ratings,
       avgRate: averageRate(updReview.ratings),
       likes: updReview.likes,
+      comments: updReview.comments
     },
     (err: any) => {
       if (err) console.log(err)
@@ -179,9 +183,8 @@ app.put('/reviews', JSONParser, async (req, res) => {
     {
       likes: await updateLikesCount(updReview.user),
     },
-    (err: any, docs: any) => {
+    (err: any) => {
       if (err) console.log(err)
-      else console.log('User like count updated')
     },
   )
 })

@@ -6,6 +6,8 @@ import MarkdownText from './MarkdownText'
 import { Rating } from 'react-simple-star-rating'
 import { useEditReviewMutation } from '../redux/apiSlice'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import Comments from './Comments'
 
 interface IProps {
   review: IReview
@@ -35,7 +37,7 @@ export default function Review({ review, expanded }: IProps) {
   }
 
   return (
-    <article className=' bg-zinc-100 dark:bg-zinc-800 '>
+    <article className=" bg-zinc-100 dark:bg-zinc-800 ">
       <figure className="mt-2">
         <img src={review.pic} alt="" />
       </figure>
@@ -73,7 +75,9 @@ export default function Review({ review, expanded }: IProps) {
       </main>
 
       <footer className="mr-5 mb-2">
-        <div className="text-right italic">{review.user}</div>
+        <div className="text-right italic">
+          <PersonOutlineIcon /> {review.user}
+        </div>
         <div className="text-right italic text-sm mb-3">{review.date}</div>
         <div className="card-actions justify-end mb-3">
           {review?.tags?.map((tag, index) => (
@@ -82,46 +86,50 @@ export default function Review({ review, expanded }: IProps) {
             </div>
           ))}
         </div>
-        {expanded && user.name && review.user !== user.name && (
-          <section>
-            <div className="text-right">
-              <div>
-                <button onClick={handleLike}>
-                  <ThumbUpIcon className={review.likes.includes(user.name) ? 'text-primary' : 'text-zinc-200'} />
-                </button>{' '}
-                {review.likes.length}
-              </div>
-              Your rate:
-              <div>
-                <Rating
-                  initialValue={existingRating && existingRating.rate ? existingRating.rate : 0}
-                  onClick={handleRating}
-                  SVGclassName="display: inline"
-                  size={20}
-                  fillColor="#4506CB"
-                />
-              </div>
-            </div>
-          </section>
-        )}
         {expanded && (
-          <div className="text-right">
-            Average rate:
-            <div>
-              {review.avgRate ? (
-                <Rating
-                  initialValue={review.avgRate}
-                  allowFraction
-                  readonly
-                  fillColor="#4506CB"
-                  SVGclassName="display: inline"
-                  size={20}
-                />
-              ) : (
-                'None yet'
-              )}
+          <>
+            <section>
+              <div className="text-right">
+                <div>
+                  <button onClick={handleLike} disabled={user.name && review.user !== user.name ? false : true}>
+                    <ThumbUpIcon className={review.likes.includes(user.name) ? 'text-primary' : 'text-zinc-200'} />
+                  </button>{' '}
+                  {review.likes.length}
+                </div>
+                {user.name && review.user !== user.name && (
+                  <div>
+                    Your rate:
+                    <Rating
+                      initialValue={existingRating && existingRating.rate ? existingRating.rate : 0}
+                      onClick={handleRating}
+                      SVGclassName="display: inline"
+                      size={20}
+                      fillColor="#4506CB"
+                    />
+                  </div>
+                )}
+              </div>
+            </section>
+            <div className="text-right">
+              Average rate:
+              <div>
+                {review.avgRate ? (
+                  <Rating
+                    initialValue={review.avgRate}
+                    allowFraction
+                    readonly
+                    fillColor="#4506CB"
+                    SVGclassName="display: inline"
+                    size={20}
+                  />
+                ) : (
+                  'None yet'
+                )}
+              </div>
+              <hr className="mb-1 mt-5 border-primary" />
             </div>
-          </div>
+            <Comments review={review} />
+          </>
         )}
       </footer>
     </article>

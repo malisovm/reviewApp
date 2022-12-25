@@ -14,6 +14,10 @@ input {
   @apply m-1 p-1 dark:bg-zinc-800 border-2 rounded;
 }
 
+h1 {
+  @apply font-bold text-xl mb-2 uppercase;
+}
+
 h3 {
-  @apply font-bold text-2xl;
+  @apply font-bold text-lg mb-3;
 }

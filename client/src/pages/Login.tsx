@@ -4,7 +4,6 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { useAppDispatch } from '../redux/hooks'
 import { setUser, setAlert } from '../redux/localSlice'
 import { useAddUserMutation, useAuthenticateUserMutation } from '../redux/apiSlice'
-import { nanoid } from '@reduxjs/toolkit'
 import { IUser } from '../interfaces'
 
 export default function Login() {
@@ -35,7 +34,6 @@ export default function Login() {
           dispatch(setAlert({ text: rejected.data, variant: 'alert-error' }))
         })
     } else if (createUser) {
-      results._id = nanoid()
       results.role = 'user'
       addUser(results)
         .unwrap()
@@ -54,10 +52,14 @@ export default function Login() {
     <div className="flex justify-center mt-32">
       <section className="bg-white dark:bg-zinc-900 rounded-xl w-64 max-w-md text-center">
         <form className="p-6 flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="font-bold text-xl mb-2">Log in</h1>
-          <input {...register('name', { required: true, minLength: 3, maxLength: 30 })} />
+          <h1>Log in</h1>
+          <input {...register('name', { required: true, minLength: 3, maxLength: 30 })} autoComplete="off" />
           {errors.name && <div className="text-red-700">Username must be 3-30 symbols long</div>}
-          <input {...register('password', { required: true, minLength: 3, maxLength: 30 })} type="password" />
+          <input
+            {...register('password', { required: true, minLength: 3, maxLength: 30 })}
+            type="password"
+            autoComplete="off"
+          />
           {errors.password && <div className="text-red-700">Password must be 3-30 symbols long</div>}
           <button type="submit" className="btn btn-primary">
             Submit

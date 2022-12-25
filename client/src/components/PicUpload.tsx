@@ -41,6 +41,10 @@ export default function PicUpload({ pic, setPic }: IProps) {
     console.log(acceptedFiles)
   }
 
+  function stopPropagation(e: React.MouseEvent) {
+    e.stopPropagation()
+  }
+
   return (
     <div className="flex flex-col justify-center">
       {url && (
@@ -51,11 +55,12 @@ export default function PicUpload({ pic, setPic }: IProps) {
       )}
       {!url && (
         <div
-          {...getRootProps({ className: 'dropzone' })}
-          className="p-3 py-5 bg-zinc-200 dark:bg-zinc-800 border rounded"
+          {...getRootProps()}
+          className="p-3 py-5 bg-zinc-200 dark:bg-zinc-800 border rounded dropzone"
+          onClick={stopPropagation}
         >
           <input {...getInputProps()} />
-          <div className='text-center'>Drag 'n' drop an image file here</div>
+          <div className="text-center">Drag 'n' drop an image file here</div>
         </div>
       )}
     </div>

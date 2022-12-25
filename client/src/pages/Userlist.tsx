@@ -12,10 +12,6 @@ export default function Userlist() {
   const navigate = useNavigate()
   const { data: users, isLoading, isError } = useGetUsersQuery()
 
-  useEffect(() => {
-    if (user.role !== 'admin') navigate('/')
-  }, [user])
-
   function handleClick(user: IUser) {
     navigate('/myreviews', {
       state: user,
@@ -52,8 +48,8 @@ export default function Userlist() {
     [],
   )
 
-  if (isLoading) return <h1 className="text-xl">Loading...</h1>
-  if (isError) return <h1 className="text-red-700 text-xl">An error occured</h1>
+  if (isLoading) return <h1>Loading...</h1>
+  if (isError) return <h1 className="text-red-700">An error occured</h1>
 
   return (
     <div className="flex flex-col w-full mt-32">

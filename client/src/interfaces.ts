@@ -9,9 +9,10 @@ export interface IReview {
   verdict: number
   user: string
   date: string
-  ratings: {user: string, rate: number}[]
+  ratings: {_id?: string, user: string, rate: number}[]
   avgRate: number
   likes: string[]
+  comments: {_id?: string, user: string, text: string}[]
 }
 
 export interface IUser {

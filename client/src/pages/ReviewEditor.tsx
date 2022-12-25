@@ -8,8 +8,6 @@ import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import PicUpload from '../components/PicUpload'
 import MarkdownText from '../components/MarkdownText'
 import { setAlert } from '../redux/localSlice'
-import { nanoid } from '@reduxjs/toolkit'
-import { getDate } from '../utility'
 import Chip from '@mui/material/Chip'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
@@ -47,11 +45,6 @@ export default function ReviewEditor() {
       newReview.ratings = review.ratings
       editReview(newReview)
     } else if (!review) {
-      newReview._id = nanoid()
-      newReview.date = getDate()
-      newReview.ratings = []
-      newReview.avgRate = 0
-      newReview.likes = []
       addReview(newReview)
     }
     reset()
@@ -114,13 +107,14 @@ export default function ReviewEditor() {
 
           <label>
             <div className="mb-1">Text</div>
-            <div className="container bg-zinc-800" data-color-mode={theme}>
-              <MDEditor className='bg-zinc-800'
+            <div className="container dark:bg-zinc-800" data-color-mode={theme}>
+              <MDEditor
+                className="dark:bg-zinc-800"
                 value={text}
                 //@ts-ignore
                 onChange={setText}
                 preview="edit"
-                fill='red'
+                fill="red"
               />
               <details className="border rounded mt-1 p-1">
                 <summary>See preview</summary>
@@ -141,13 +135,15 @@ export default function ReviewEditor() {
               options={uniqueTags as string[]}
               defaultValue={review ? review.tags : undefined}
               freeSolo
-              onChange={(_, values)=>{setNewReviewTags(values)}}
+              onChange={(_, values) => {
+                setNewReviewTags(values)
+              }}
               renderTags={(value: readonly string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                   <Chip variant="outlined" label={option} {...getTagProps({ index })} />
                 ))
               }
-              renderInput={(params) => <TextField {...params} variant="filled" placeholder="Enter tags" />}
+              renderInput={(params) => <TextField {...params} variant="filled" placeholder="Type and press/tap Enter to add new tag" />}
               key={resetTags}
             />
           </label>

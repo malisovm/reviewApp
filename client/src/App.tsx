@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import ReviewEditor from './pages/ReviewEditor'
 import Main from './pages/Main'
 import MyReviews from './pages/MyReviews'
@@ -13,6 +13,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 
 export default function App() {
   const theme = useAppSelector((state) => state.local.theme)
+  const user = useAppSelector((state) => state.local.user)
 
   const muiTheme = React.useMemo(
     () =>
@@ -38,10 +39,15 @@ export default function App() {
         <CssBaseline />
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/revieweditor" element={<ReviewEditor />} />
-          <Route path="/myreviews" element={<MyReviews />} />
-          <Route path="/userlist" element={<Userlist />} />
+          {!user.name && <Route path="/login" element={<Login />} />}
+          {user.name && (
+            <>
+              <Route path="/revieweditor" element={<ReviewEditor />} />
+              <Route path="/myreviews" element={<MyReviews />} />
+            </>
+          )}
+          {user.role === 'admin' && <Route path="/userlist" element={<Userlist />} />}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ThemeProvider>
     </div>

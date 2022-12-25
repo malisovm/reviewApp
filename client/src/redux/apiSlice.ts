@@ -75,6 +75,7 @@ export const dataApi = createApi({
 export const {
   useAddReviewMutation,
   useGetReviewsQuery,
+  useLazyGetReviewsQuery,
   useDeleteReviewMutation,
   useEditReviewMutation,
   useAddUserMutation,
