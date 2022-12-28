@@ -5,7 +5,7 @@ import { IReview } from '../interfaces'
 import ReviewCard from '../components/ReviewCard'
 
 export default function Main() {
-  const { data: reviews, isLoading, isError } = useGetReviewsQuery(undefined, {pollingInterval: 5000})
+  const { data: reviews, isLoading, isError } = useGetReviewsQuery(undefined, { pollingInterval: 5000 })
   var newestReviews: IReview[] = []
   var highestRatedReviews: IReview[] = []
   var filteredReviews: IReview[] = []
@@ -25,13 +25,13 @@ export default function Main() {
   if (isError) return <h1 className="text-red-700">An error occured</h1>
 
   return (
-    <div className="flex flex-row justify-center mx-3 mt-6">
+    <div className="flex flex-row justify-center mx-3 mt-6 flex-wrap  gap-8">
       {!filter && (
-        <div className="flex flex-col w-5/6">
+        <div className="flex flex-row w-5/6 justify-center flex-wrap gap-12">
           {newestReviews.length > 0 && (
             <section>
-              <header className="text-lg font-bold text-center mb-3 uppercase">Newest reviews</header>
-              <article className="flex justify-center mt-5 gap-3 flex-wrap">
+              <h1 className="text-center">Newest reviews</h1>
+              <article className="flex flex-col justify-center mt-5 gap-5 flex-wrap">
                 {newestReviews?.map((review: IReview, index) => (
                   <ReviewCard review={review} key={review._id} />
                 ))}
@@ -40,9 +40,9 @@ export default function Main() {
           )}
 
           {highestRatedReviews.length > 0 && (
-            <section className="mt-6">
-              <header className="text-lg font-bold text-center mb-3 uppercase">Highest rated</header>
-              <article className="flex justify-center mt-5 gap-3 flex-wrap">
+            <section>
+              <h1 className="text-center">Highest rated</h1>
+              <article className="flex flex-col justify-center mt-5 gap-5 flex-wrap">
                 {highestRatedReviews?.map((review: IReview, index) => (
                   <ReviewCard review={review} key={review._id} />
                 ))}
@@ -50,12 +50,12 @@ export default function Main() {
             </section>
           )}
           {!newestReviews.length ? (
-            <header className="text-lg font-bold text-center mb-3 uppercase italic">No reviews yet</header>
+            <h1 className="italic text-center">No reviews yet</h1>
           ) : (
             !highestRatedReviews.length && (
-              <section className="mt-6">
-                <header className="text-lg font-bold text-center mb-3 uppercase">Highest rated</header>
-                <div className="text-lg font-bold text-center mb-3 uppercase italic">No user ratings yet</div>
+              <section>
+                <h1 className='text-center'>Highest rated</h1>
+                <h3 className="italic text-center">No user ratings yet</h3>
               </section>
             )
           )}
@@ -82,7 +82,8 @@ export default function Main() {
         </div>
       )}
       <div>
-        <TagsCloud setFilter={setFilter} reviews={reviews}/>
+        <h1 className="text-center">Tags</h1>
+        <TagsCloud setFilter={setFilter} reviews={reviews} />
       </div>
     </div>
   )

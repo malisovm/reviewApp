@@ -1,76 +1,39 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppSelector, useAppDispatch } from '../redux/hooks'
-import { setTheme, setUser, setAlert } from '../redux/localSlice'
-import { initialUser } from '../redux/localSlice'
-import ThumbUpIcon from '@mui/icons-material/ThumbUp'
+import NavbarButtons from './NavbarButtons'
+import MenuIcon from '@mui/icons-material/Menu';
 
 export default function Navbar() {
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const theme = useAppSelector((state) => state.local.theme)
-  const user = useAppSelector((state) => state.local.user)
-
-  function toggleTheme() {
-    let newTheme: string = theme === 'light' ? 'dark' : 'light'
-    dispatch(setTheme(newTheme))
-    localStorage.setItem('theme', newTheme)
-  }
 
   return (
-    <div className="flex h-16 mb-3 justify-between items-center bg-zinc-900 dark:bg-stone-200">
-      <button
-        className="italic text-2xl m-3 text-primary font-bold"
-        onClick={() => {
-          navigate('/')
-        }}
-      >
-        RatingApp
-      </button>
-      <span className="space-x-3 m-2">
-        {!user.name ? (
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              navigate('/login')
-            }}
+    <div className="navbar bg-zinc-900 dark:bg-stone-200 text-zinc-50 dark:text-black">
+      <div className="navbar-start">
+        <div className="dropdown">
+          <label tabIndex={0} className="btn btn-ghost lg:hidden">
+            <MenuIcon/>
+          </label>
+          <ul
+            tabIndex={0}
+            className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-zinc-900 dark:bg-stone-200 text-zinc-50 dark:text-black items-center"
           >
-            Log in
-          </button>
-        ) : (
-          <>
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                navigate('/myreviews')
-              }}
-            >
-              <span>{user.name} &nbsp; <ThumbUpIcon fontSize='small'/>{user.likes}</span>
-            </button>
-            {user.role === 'admin' && (
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  navigate('/userlist')
-                }}
-              >
-                Userlist
-              </button>
-            )}
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                dispatch(setUser(initialUser))
-                dispatch(setAlert({ text: 'You have logged out...', variant: 'alert-success' }))
-                navigate('/')
-              }}
-            >
-              Log out
-            </button>
-          </>
-        )}
-        <input type="checkbox" className="toggle toggle-primary cursor-pointer align-middle" onClick={toggleTheme} />
-      </span>
+            <NavbarButtons />
+          </ul>
+        </div>
+        <button
+          className="italic text-2xl font-bold btn btn-ghost normal-case text-zinc-50 dark:text-primary"
+          onClick={() => {
+            navigate('/')
+          }}
+        >
+          RatingApp
+        </button>
+      </div>
+      <div className="navbar-end hidden lg:flex">
+        <ul className="menu menu-horizontal px-1 items-center">
+          <NavbarButtons />
+        </ul>
+      </div>
     </div>
   )
 }

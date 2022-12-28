@@ -31,7 +31,7 @@ export default function App() {
   return (
     <div
       data-theme={theme === 'dark' ? 'dark' : 'light'}
-      className={`${theme === 'dark' ? 'dark' : ''} bg-stone-200 dark:bg-zinc-800 min-h-screen flex-row`}
+      className={`${theme === 'dark' ? 'dark' : ''} bg-stone-200 dark:bg-zinc-800 min-h-screen`}
     >
       <Navbar />
       <Message />

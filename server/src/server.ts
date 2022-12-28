@@ -168,7 +168,7 @@ app.put('/reviews', JSONParser, async (req, res) => {
       ratings: updReview.ratings,
       avgRate: averageRate(updReview.ratings),
       likes: updReview.likes,
-      comments: updReview.comments
+      comments: updReview.comments,
     },
     (err: any) => {
       if (err) console.log(err)

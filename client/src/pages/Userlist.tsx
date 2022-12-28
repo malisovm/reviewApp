@@ -54,7 +54,7 @@ export default function Userlist() {
   return (
     <div className="flex flex-col w-full mt-32">
       <h1 className="place-self-center font-bold text-xl mb-5 uppercase">Admin access to users</h1>
-      <div className="place-self-center w-auto mb-7">
+      <div className="place-self-center w-5/6 max-w-xl mb-7">
           <MaterialReactTable columns={columns} data={users as IUser[]} />
       </div>
     </div>

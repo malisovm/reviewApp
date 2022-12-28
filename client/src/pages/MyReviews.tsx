@@ -34,7 +34,7 @@ export default function MyReviews() {
     deleteReview(row)
   }
 
-   const columns = useMemo<MRT_ColumnDef<IReview>[]>(
+  const columns = useMemo<MRT_ColumnDef<IReview>[]>(
     () => [
       {
         accessorFn: (row) => row.title,
@@ -47,29 +47,32 @@ export default function MyReviews() {
           </Modal>
         ),
       },
-      {
-        accessorFn: (row) => row.group,
-        id: 'group',
-        header: 'Group',
-        Header: <b className="text-primary">Group</b>,
-      },
-      {
+        {
         accessorFn: (row) => row.product,
         id: 'product',
         header: 'Product',
         Header: <b className="text-primary">Product</b>,
       },
       {
+        accessorFn: (row) => row.group,
+        id: 'group',
+        header: 'Group',
+        Header: <b className="text-primary">Group</b>,
+        size: 100
+      },
+      {
         accessorFn: (row) => row.verdict,
         id: 'verdict',
         header: 'Verdict',
         Header: <b className="text-primary">Verdict</b>,
+        size: 40
       },
       {
         accessorFn: (row) => row.avgRate,
         id: 'average rate',
         header: 'Average rate',
         Header: <b className="text-primary">Avg. rating</b>,
+        size: 40
       },
       {
         accessorFn: (row) => (
@@ -91,6 +94,7 @@ export default function MyReviews() {
         id: 'actions',
         header: 'Actions',
         Header: <b className="text-primary">Actions</b>,
+        size: 40
       },
     ],
     [],
@@ -101,11 +105,9 @@ export default function MyReviews() {
 
   return (
     <div className="flex flex-col w-full mt-32">
-      <h1 className="place-self-center">
-        {!adminViewUser ? 'Your reviews' : `${user.name} reviews`}
-      </h1>
-      <div className="place-self-center w-auto mb-7">
-           <MaterialReactTable columns={columns} data={userReviews as IReview[]} />
+      <h1 className="place-self-center">{!adminViewUser ? 'Your reviews' : `${user.name} reviews`}</h1>
+      <div className="place-self-center mb-7 w-5/6 max-w-4xl">
+        <MaterialReactTable columns={columns} data={userReviews as IReview[]} />
       </div>
 
       <button className="btn btn-primary place-self-center" onClick={handleCreate}>

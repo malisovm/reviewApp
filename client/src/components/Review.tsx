@@ -39,7 +39,7 @@ export default function Review({ review, expanded }: IProps) {
   return (
     <article className=" bg-zinc-100 dark:bg-zinc-800 ">
       <figure className="mt-2">
-        <img src={review.pic} alt="" />
+        <img src={review.pic} alt="" className="max-h-72" />
       </figure>
 
       <header className="card-body">
