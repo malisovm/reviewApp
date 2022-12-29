@@ -42,7 +42,7 @@ export default function MyReviews() {
         header: 'Title',
         Header: <b className="text-primary">Title</b>,
         Cell: ({ cell }) => (
-          <Modal text={cell.getValue() as string}>
+          <Modal options={'normal-case btn-sm btn-active btn-ghost'} text={cell.getValue() as string}>
             <Review review={cell.row.original} expanded={true} />
           </Modal>
         ),

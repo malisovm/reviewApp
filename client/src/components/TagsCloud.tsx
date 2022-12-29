@@ -38,14 +38,14 @@ function TagsCloud({ setFilter, reviews }: IProps) {
   if (tags) uniqueTagsAndCounts = countUniqueTags(tags.filter((tag) => tag !== undefined) as string[])
 
   return (
-    <div className="bg-zinc-800 dark:bg-stone-200 w-56 h-56 flex justify-center items-center rounded-xl">
+    <div className="dark:bg-zinc-800 bg-zinc-100 w-56 h-56 flex justify-center items-center rounded-xl">
       {tags && tags.length > 0 ? (
         <TagCloud
           minSize={12}
           maxSize={32}
           tag-cloud="bg-white"
           tags={uniqueTagsAndCounts}
-          colorOptions={{ hue: 'blue', luminosity: theme === 'dark' ? 'bright' : 'light' }}
+          colorOptions={{ hue: 'blue', luminosity: theme === 'dark' ? 'light' : 'bright' }}
           onClick={(tag: ITag) => setFilter(tag.value)}
         />
       ) : (
