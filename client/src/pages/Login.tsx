@@ -5,8 +5,10 @@ import { useAppDispatch } from '../redux/hooks'
 import { setUser, setAlert } from '../redux/localSlice'
 import { useAddUserMutation, useAuthenticateUserMutation } from '../redux/apiSlice'
 import { IUser } from '../interfaces'
+import useLocMsg from '../localization/useLocMsg'
 
 export default function Login() {
+  const locMsg = useLocMsg()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const [addUser] = useAddUserMutation()
@@ -52,20 +54,20 @@ export default function Login() {
     <div className="flex justify-center mt-32">
       <section className="bg-white dark:bg-zinc-900 rounded-xl w-64 max-w-md text-center">
         <form className="p-6 flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
-          <h1>Log in</h1>
+          <h1>{locMsg('Shared.logIn')}</h1>
           <input {...register('name', { required: true, minLength: 3, maxLength: 30 })} autoComplete="off" />
-          {errors.name && <div className="text-red-700">Username must be 3-30 symbols long</div>}
+          {errors.name && <div className="text-red-700">{locMsg('Login.usernameValidationError')}</div>}
           <input
             {...register('password', { required: true, minLength: 3, maxLength: 30 })}
             type="password"
             autoComplete="off"
           />
-          {errors.password && <div className="text-red-700">Password must be 3-30 symbols long</div>}
+          {errors.password && <div className="text-red-700">{locMsg('Login.passwordValidationError')}</div>}
           <button type="submit" className="btn btn-primary">
-            Submit
+          {locMsg('Shared.submit')}
           </button>
           <label className="label cursor-pointer mt-3">
-            <span className="label-text">Create new account</span>
+            <span className="label-text">{locMsg('Login.createNewAccount')}</span>
             <input
               type="checkbox"
               checked={createUser ? true : false}

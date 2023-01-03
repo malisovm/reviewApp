@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import ScoreIndicator from './ScoreIndicator'
 import { IReview } from '../interfaces'
 import { useAppSelector } from '../redux/hooks'
 import MarkdownText from './MarkdownText'
 import { Rating } from 'react-simple-star-rating'
 import { useEditReviewMutation } from '../redux/apiSlice'
-import ThumbUpIcon from '@mui/icons-material/ThumbUp'
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import Comments from './Comments'
+import useLocMsg, {LocMsgKey} from '../localization/useLocMsg'
 
 interface IProps {
   review: IReview
@@ -15,6 +16,7 @@ interface IProps {
 }
 
 export default function Review({ review, expanded }: IProps) {
+  const locMsg = useLocMsg()
   const user = useAppSelector((state) => state.local.user)
   const [editReview] = useEditReviewMutation()
   const existingRating = review.ratings.find((rating) => rating.user === user.name)
@@ -38,31 +40,35 @@ export default function Review({ review, expanded }: IProps) {
 
   return (
     <article className=" bg-zinc-100 dark:bg-zinc-800 ">
-      <figure className="mt-2">
+      <figure id='Pic' className="mt-2">
         <img src={review.pic} alt="" className="max-h-72" />
       </figure>
 
       <header className="card-body">
-        <h2 className="flex justify-between card-title">
-          <span id="title and group">
-            <span className="mr-2">{review.title}</span>
-            <span
+        <h2 className="flex justify-between card-title" id='First line of card'>
+          <span id="Title and group">
+            <span id='Title' className="mr-2">{review.title}</span>
+            <span id='Group'
               className={`badge ${
-                review.group === 'Books' ? 'badge-accent' : review.group === 'Games' ? 'badge-info' : 'badge-warning'
+                review.group === 'books' ? 'badge-accent' : review.group === 'games' ? 'badge-info' : 'badge-warning'
               }`}
             >
-              {review.group}
+              {locMsg(`Shared.${review.group}` as LocMsgKey)}
             </span>
           </span>
+
           {review.avgRate > 0 && !expanded && (
-            <div className="text-right">
+            <div className="text-right" id='Average rating (non-expanded card)'>
               <Rating initialValue={review.avgRate} allowFraction readonly SVGclassName="display: inline" size={20} />
             </div>
           )}
         </h2>
-        <div className="italic">Review of "{review.product}"</div>
-        <div>
-          Verdict: <ScoreIndicator score={review.verdict} />
+
+        <div className="italic" id="Product">
+          {locMsg('Review.reviewOf')} "{review.product}"
+        </div>
+        <div id="Verdict">
+          {locMsg('Shared.verdict')}: <ScoreIndicator score={review.verdict} />
         </div>
       </header>
 
@@ -74,45 +80,48 @@ export default function Review({ review, expanded }: IProps) {
         )}
       </main>
 
-      <footer className="mr-5 mb-2">
-        <div className="text-right italic">
-          <PersonOutlineIcon /> {review.user}
-        </div>
-        <div className="text-right italic text-sm mb-3">{review.date}</div>
-        <div className="card-actions justify-end mb-3">
+      <footer className="mr-5 mb-2 text-right">
+        <section id="Name and date" className="italic">
+          <div>
+            <PersonOutlineIcon /> {review.user}
+          </div>
+          <div className="italic text-sm mb-3">{review.date}</div>
+        </section>
+
+        <section id="Tags" className="card-actions justify-end mb-3">
           {review?.tags?.map((tag, index) => (
             <div key={index} className="badge badge-outline">
               {tag}
             </div>
           ))}
-        </div>
+        </section>
+
         {expanded && (
           <>
-            <section>
-              <div className="text-right">
-                <div>
-                  <button onClick={handleLike} disabled={user.name && review.user !== user.name ? false : true}>
-                    <ThumbUpIcon className={review.likes.includes(user.name) ? 'text-primary' : 'text-zinc-200'} />
-                  </button>{' '}
-                  {review.likes.length}
-                </div>
-                {user.name && review.user !== user.name && (
-                  <div>
-                    Your rate:
-                    <Rating
-                      initialValue={existingRating && existingRating.rate ? existingRating.rate : 0}
-                      onClick={handleRating}
-                      SVGclassName="display: inline"
-                      size={20}
-                      fillColor="#4506CB"
-                    />
-                  </div>
-                )}
-              </div>
+            <section id="Likes" className="my-3">
+              <button onClick={handleLike} disabled={user.name && review.user !== user.name ? false : true}>
+                <ThumbUpOutlinedIcon
+                  className={`${review.likes.includes(user.name) ? 'text-primary' : 'text-zinc-200'} align-text-top`}
+                />
+              </button>
+              {review.likes.length}
             </section>
-            <div className="text-right">
-              Average rate:
-              <div>
+
+            <section id="Ratings">
+              {user.name && review.user !== user.name && (
+                <div id="User rating">
+                  <div>{locMsg('Review.yourRate')}:</div>
+                  <Rating
+                    initialValue={existingRating && existingRating.rate ? existingRating.rate : 0}
+                    onClick={handleRating}
+                    SVGclassName="display: inline"
+                    size={20}
+                    fillColor="#4506CB"
+                  />
+                </div>
+              )}
+              {locMsg('Review.avgRate')}:
+              <div id="Average rating (expanded card)">
                 {review.avgRate ? (
                   <Rating
                     initialValue={review.avgRate}
@@ -123,12 +132,15 @@ export default function Review({ review, expanded }: IProps) {
                     size={20}
                   />
                 ) : (
-                  'None yet'
+                  locMsg('Shared.noneYet')
                 )}
               </div>
+            </section>
+
+            <section id="Comments" className='text-left'>
               <hr className="mb-1 mt-5 border-primary" />
-            </div>
-            <Comments review={review} />
+              <Comments review={review} />
+            </section>
           </>
         )}
       </footer>

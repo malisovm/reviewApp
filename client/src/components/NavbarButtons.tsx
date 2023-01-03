@@ -2,11 +2,13 @@ import React from 'react'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { setTheme, setUser, setAlert, setLocale } from '../redux/localSlice'
 import { useNavigate } from 'react-router-dom'
-import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import { initialUser } from '../redux/localSlice'
 import { DarkModeSwitch } from 'react-toggle-dark-mode'
+import useLocMsg from '../localization/useLocMsg'
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined'
 
 export default function NavbarButtons() {
+  const locMsg = useLocMsg()
   const theme = useAppSelector((state) => state.local.theme)
   const user = useAppSelector((state) => state.local.user)
   const locale = useAppSelector((state) => state.local.locale)
@@ -34,7 +36,7 @@ export default function NavbarButtons() {
               navigate('/login')
             }}
           >
-            Log in
+            {locMsg('Shared.logIn')}
           </a>
         </li>
       ) : (
@@ -47,7 +49,7 @@ export default function NavbarButtons() {
               }}
             >
               <span>
-                {user.name} &nbsp; <ThumbUpIcon fontSize="small" />
+                {user.name} &nbsp; <ThumbUpOutlinedIcon fontSize="small" className="align-text-top" />
                 {user.likes}
               </span>
             </button>
@@ -60,7 +62,7 @@ export default function NavbarButtons() {
                   navigate('/userlist')
                 }}
               >
-                Userlist
+                {locMsg('NavbarButtons.userlist')}
               </button>
             </li>
           )}
@@ -73,7 +75,7 @@ export default function NavbarButtons() {
                 navigate('/')
               }}
             >
-              Log out
+              {locMsg('NavbarButtons.logOut')}
             </button>
           </li>
         </>

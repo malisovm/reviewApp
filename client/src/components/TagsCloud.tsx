@@ -1,8 +1,8 @@
 import React from 'react'
 import { TagCloud } from 'react-tagcloud'
 import { useAppSelector } from '../redux/hooks'
-import { useGetReviewsQuery } from '../redux/apiSlice'
 import { IReview } from '../interfaces'
+import useLocMsg from '../localization/useLocMsg'
 
 interface ITag {
   value: string
@@ -15,6 +15,7 @@ interface IProps {
 }
 
 function TagsCloud({ setFilter, reviews }: IProps) {
+  const locMsg = useLocMsg()
   const theme = useAppSelector((state) => state.local.theme)
   const tags = reviews?.flatMap((review) => review.tags)
 
@@ -49,7 +50,7 @@ function TagsCloud({ setFilter, reviews }: IProps) {
           onClick={(tag: ITag) => setFilter(tag.value)}
         />
       ) : (
-        <span className="text-white dark:text-black">No tags yet</span>
+        <span className="text-white dark:text-black">{locMsg('Shared.noneYet')}</span>
       )}
     </div>
   )

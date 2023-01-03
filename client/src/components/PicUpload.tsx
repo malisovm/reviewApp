@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
+import useLocMsg from '../localization/useLocMsg'
 
 interface IProps {
   pic?: string
@@ -7,6 +8,7 @@ interface IProps {
 }
 
 export default function PicUpload({ pic, setPic }: IProps) {
+const locMsg = useLocMsg()
   const { acceptedFiles, getRootProps, getInputProps, inputRef } = useDropzone({
     accept: {
       'image/png': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
@@ -50,7 +52,7 @@ export default function PicUpload({ pic, setPic }: IProps) {
       {url && (
         <>
           <img src={url} alt="" className="text-center" />
-          <button onClick={removePic}>Remove pic</button>
+          <button onClick={removePic}>{locMsg('PicUpload.removePic')}</button>
         </>
       )}
       {!url && (
@@ -60,7 +62,7 @@ export default function PicUpload({ pic, setPic }: IProps) {
           onClick={stopPropagation}
         >
           <input {...getInputProps()} />
-          <div className="text-center">Drag 'n' drop an image file here</div>
+          <div className="text-center">{locMsg('PicUpload.putImageHere')}</div>
         </div>
       )}
     </div>

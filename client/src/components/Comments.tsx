@@ -5,6 +5,7 @@ import { useAppSelector } from '../redux/hooks'
 import { useEditReviewMutation } from '../redux/apiSlice'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import TextareaAutosize from 'react-textarea-autosize'
+import useLocMsg from '../localization/useLocMsg'
 
 interface IComment {
   user: string
@@ -17,6 +18,7 @@ interface IProps {
 }
 
 export default function Comments({ review }: IProps) {
+  const locMsg = useLocMsg()
   const user = useAppSelector((state) => state.local.user)
   const comments = review.comments
   const [editReview] = useEditReviewMutation()
@@ -36,7 +38,7 @@ export default function Comments({ review }: IProps) {
 
   return (
     <div>
-      <h3 className="ml-3 ">Comments</h3>
+      <h3 className="ml-3 ">{locMsg('Comments.header')}</h3>
       {comments &&
         comments.map((comment) => (
           <div key={comment._id} className="chat chat-start">
@@ -49,19 +51,19 @@ export default function Comments({ review }: IProps) {
       {user.name && (
         <form onSubmit={handleSubmit(onSubmit)} className="mt-3 ml-3">
           <label>
-            Add comment:
+          {locMsg('Comments.addComment')}:
             <div>
               <TextareaAutosize
-                placeholder="Type comment here"
+                placeholder={locMsg('Comments.placeholder')}
                 className="textarea w-full resize-none dark:bg-zinc-700"
                 {...register('text', { required: true, minLength: 3, maxLength: 100 })}
               />
-              {errors.text && <div className="text-red-700">Comments must be 3-100 symbols long</div>}
+              {errors.text && <div className="text-red-700">{locMsg('Comments.validationError')}</div>}
             </div>
           </label>
           <div>
             <button type="submit" className="btn btn-primary">
-              Submit
+            {locMsg('Shared.submit')}
             </button>
           </div>
         </form>

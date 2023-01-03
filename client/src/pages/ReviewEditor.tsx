@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { IReview } from '../interfaces'
 import { useAddReviewMutation, useGetReviewsQuery, useEditReviewMutation } from '../redux/apiSlice'
@@ -11,8 +11,10 @@ import { setAlert } from '../redux/localSlice'
 import Chip from '@mui/material/Chip'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
+import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
 
 export default function ReviewEditor() {
+  const locMsg = useLocMsg()
   const { state } = useLocation()
   const user = state.user
   var review: IReview | undefined = undefined
@@ -23,7 +25,7 @@ export default function ReviewEditor() {
   const [newReviewTags, setNewReviewTags] = useState<string[]>([])
   const [resetTags, setResetTags] = useState<string>(Math.random().toString())
   const navigate = useNavigate()
-  const [text, setText] = useState(review ? review.text : `**Write your review here** (*Markdown syntax supported*)`)
+  const [text, setText] = useState(review ? review.text : '')
   const theme = useAppSelector((state) => state.local.theme)
   const [pic, setPic] = useState<string>()
   const dispatch = useAppDispatch()
@@ -33,11 +35,23 @@ export default function ReviewEditor() {
     formState: { errors },
     handleSubmit,
     reset,
+    setValue: setFieldValue,
+    setError: setFieldError,
+    clearErrors: clearFieldErrors,
   } = useForm<IReview>()
 
+  useEffect(() => {
+    register('text', { required: true, minLength: 10, maxLength: 2000 })
+  }, [])
+
+  function handleTextChange(text?: string) {
+    setText(text || '')
+    setFieldValue('text', text || '', { shouldValidate: true })
+  }
+
   const onSubmit: SubmitHandler<IReview> = (newReview) => {
+    console.log('NEW REVIEW', newReview)
     newReview.tags = newReviewTags
-    newReview.text = text
     newReview.pic = pic
     newReview.user = user.name
     if (review) {
@@ -55,21 +69,22 @@ export default function ReviewEditor() {
 
   const uniqueTags = [...new Set(reviews?.flatMap((review) => review.tags))]
   const textInputs = ['title', 'product']
-  const selectInputs = { group: ['Books', 'Movies', 'Games'], verdict: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
+  const selectInputs = { group: ['books', 'movies', 'games'], verdict: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
 
   return (
     <div className="flex justify-center mt-32">
       <section className="bg-white dark:bg-zinc-900 rounded-xl w-5/6 max-w-md">
-        <form className="p-6 flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
+        <form className="p-6 flex flex-col gap-5 w-full" onSubmit={handleSubmit(onSubmit)}>
           <header className="text-center font-bold text-2xl mb-3">
-            {!review ? 'Create new review' : 'Edit review'}
+            {!review ? locMsg('ReviewEditor.createNewReview') : locMsg('ReviewEditor.editReview')}
           </header>
+
           {textInputs.map((input, index) => (
             <label key={index}>
-              <div className="mb-1 capitalize">{input}</div>
+              {locMsg(`ReviewEditor.textInputs.${input}` as LocMsgKey)}
               <div>
                 <input
-                  placeholder={`Enter ${input}`}
+                  placeholder={locMsg(`ReviewEditor.textInputs.${input}Placeholder` as LocMsgKey)}
                   className="w-full"
                   autoComplete="off"
                   defaultValue={review ? (input === 'title' ? review.title : review.product) : ''}
@@ -88,48 +103,55 @@ export default function ReviewEditor() {
 
           {Object.entries(selectInputs).map(([selectInput, inputOptions]) => (
             <label key={selectInput}>
-              <div className="mb-1 capitalize">{selectInput}</div>
+              {locMsg(`ReviewEditor.selectInputs.${selectInput}` as LocMsgKey)}
               <select
                 defaultValue={review ? (selectInput === 'group' ? review.group : review.verdict) : 'default'}
                 className="border rounded p-2 w-full dark:bg-zinc-800"
                 {...register(selectInput as keyof IReview, { required: true, pattern: /^(?!default$)/ })}
               >
                 <option value="default" disabled>
-                  Select {selectInput.toLowerCase()}
+                  {locMsg(`ReviewEditor.selectInputs.${selectInput}Placeholder` as LocMsgKey)}
                 </option>
                 {inputOptions.map((option, index) => (
-                  <option key={index}>{option}</option>
+                  <option key={index} value={option}>{selectInput === 'group' ? locMsg(`Shared.${option}` as LocMsgKey) : option}</option>
                 ))}
               </select>
-              {errors[selectInput as keyof IReview] && <div className="text-red-700">Please select {selectInput}</div>}
+              {errors[selectInput as keyof IReview] && (
+                <div className="text-red-700">
+                  {locMsg(`ReviewEditor.selectInputs.${selectInput}ValidationError` as LocMsgKey)}
+                </div>
+              )}
             </label>
           ))}
 
           <label>
-            <div className="mb-1">Text</div>
+            {locMsg('ReviewEditor.text')}
             <div className="container dark:bg-zinc-800" data-color-mode={theme}>
               <MDEditor
                 className="dark:bg-zinc-800"
                 value={text}
-                //@ts-ignore
-                onChange={setText}
+                onChange={handleTextChange}
                 preview="edit"
-                fill="red"
+                textareaProps={{
+                  name: 'text',
+                  placeholder: locMsg('ReviewEditor.defaultReviewText'),
+                }}
               />
+              {errors.text && <div className="text-red-700">{locMsg('ReviewEditor.textValidationError')}</div>}
               <details className="border rounded mt-1 p-1">
-                <summary>See preview</summary>
+                <summary>{locMsg('ReviewEditor.seePreview')}</summary>
                 <MarkdownText text={text} />
               </details>
             </div>
           </label>
 
           <label>
-            <div>Pic</div>
+            {locMsg('ReviewEditor.pic')}
             {<PicUpload pic={review ? review.pic : undefined} setPic={setPic} />}
           </label>
 
           <label>
-            <div className="mb-1">Tags</div>
+            {locMsg('Shared.tags')}
             <Autocomplete
               multiple
               options={uniqueTags as string[]}
@@ -143,13 +165,15 @@ export default function ReviewEditor() {
                   <Chip variant="outlined" label={option} {...getTagProps({ index })} />
                 ))
               }
-              renderInput={(params) => <TextField {...params} variant="filled" placeholder="Type and press/tap Enter to add new tag" />}
+              renderInput={(params) => (
+                <TextField {...params} variant="filled" placeholder={locMsg('ReviewEditor.tagsPlaceholder')} />
+              )}
               key={resetTags}
             />
           </label>
 
           <button type="submit" className="btn btn-active btn-primary mt-3">
-            Submit
+            {locMsg('Shared.submit')}
           </button>
         </form>
       </section>

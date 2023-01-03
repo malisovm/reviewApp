@@ -5,8 +5,10 @@ import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
 import { useAppSelector } from '../redux/hooks'
 import { IUser } from '../interfaces'
+import useLocMsg from '../localization/useLocMsg'
 
 export default function Userlist() {
+  const locMsg = useLocMsg()
   const theme = useAppSelector((state) => state.local.theme)
   const user = useAppSelector((state) => state.local.user)
   const navigate = useNavigate()
@@ -23,9 +25,10 @@ export default function Userlist() {
       {
         accessorFn: (row) => row.name,
         header: 'Name',
-        Header: <b className="text-primary">Name</b>,
+        Header: <b className="text-primary">{locMsg('Userlist.name')}</b>,
         Cell: ({ cell }) => (
-          <span className='underline cursor-pointer'
+          <span
+            className="underline cursor-pointer"
             onClick={() => {
               handleClick(cell.row.original)
             }}
@@ -37,25 +40,25 @@ export default function Userlist() {
       {
         accessorFn: (row) => row.role,
         header: 'Role',
-        Header: <b className="text-primary">Role</b>,
+        Header: <b className="text-primary">{locMsg('Userlist.role')}</b>,
       },
       {
         accessorFn: (row) => row.likes,
         header: 'Likes',
-        Header: <b className="text-primary">Likes</b>,
+        Header: <b className="text-primary">{locMsg('Userlist.likes')}</b>,
       },
     ],
     [],
   )
 
-  if (isLoading) return <h1>Loading...</h1>
-  if (isError) return <h1 className="text-red-700">An error occured</h1>
+  if (isLoading) return <button className="btn loading">{locMsg('Shared.loading')}</button>
+  if (isError) return <h1 className="text-red-700">{locMsg('Shared.error')}</h1>
 
   return (
     <div className="flex flex-col w-full mt-32">
-      <h1 className="place-self-center font-bold text-xl mb-5 uppercase">Admin access to users</h1>
+      <h1 className="place-self-center font-bold text-xl mb-5 uppercase">{locMsg('Userlist.adminAccessTitle')}</h1>
       <div className="place-self-center w-5/6 max-w-xl mb-7">
-          <MaterialReactTable columns={columns} data={users as IUser[]} />
+        <MaterialReactTable columns={columns} data={users as IUser[]} />
       </div>
     </div>
   )
