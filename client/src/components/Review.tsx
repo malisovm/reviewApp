@@ -1,14 +1,14 @@
 import React from 'react'
-import ScoreIndicator from './ScoreIndicator'
-import { IReview } from '../interfaces'
-import { useAppSelector } from '../redux/hooks'
-import MarkdownText from './MarkdownText'
-import { Rating } from 'react-simple-star-rating'
-import { useEditReviewMutation } from '../redux/apiSlice'
-import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined'
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import Comments from './Comments'
-import useLocMsg, {LocMsgKey} from '../localization/useLocMsg'
+import { IReview } from '../interfaces'
+import MarkdownText from './MarkdownText'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import { Rating } from 'react-simple-star-rating'
+import ScoreIndicator from './ScoreIndicator'
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined'
+import { useAppSelector } from '../redux/hooks'
+import { useEditReviewMutation } from '../redux/apiSlice'
+import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
 
 interface IProps {
   review: IReview
@@ -22,15 +22,18 @@ export default function Review({ review, expanded }: IProps) {
   const existingRating = review.ratings.find((rating) => rating.user === user.name)
 
   function handleRating(inputRate: number) {
+    console.log('handle rating')
     let inputRating = { user: user.name, rate: inputRate }
     let newReview: IReview = JSON.parse(JSON.stringify(review))
     let exsRatingInNewRev = newReview.ratings.find((rating) => rating.user === user.name)
     if (exsRatingInNewRev) exsRatingInNewRev.rate = inputRating.rate
     else newReview.ratings.push(inputRating)
+    console.log(newReview)
     editReview(newReview)
   }
 
   function handleLike() {
+    console.log('handle like')
     let newReview: IReview = JSON.parse(JSON.stringify(review))
     let exsLikeIndex = newReview.likes.findIndex((like) => like === user.name)
     if (exsLikeIndex >= 0) newReview.likes.splice(exsLikeIndex, 1)
@@ -40,15 +43,18 @@ export default function Review({ review, expanded }: IProps) {
 
   return (
     <article className=" bg-zinc-100 dark:bg-zinc-800 ">
-      <figure id='Pic' className="mt-2">
+      <figure id="Pic" className="mt-2">
         <img src={review.pic} alt="" className="max-h-72" />
       </figure>
 
       <header className="card-body">
-        <h2 className="flex justify-between card-title" id='First line of card'>
+        <h2 className="flex justify-between card-title" id="First line of card">
           <span id="Title and group">
-            <span id='Title' className="mr-2">{review.title}</span>
-            <span id='Group'
+            <span id="Title" className="mr-2">
+              {review.title}
+            </span>
+            <span
+              id="Group"
               className={`badge ${
                 review.group === 'books' ? 'badge-accent' : review.group === 'games' ? 'badge-info' : 'badge-warning'
               }`}
@@ -58,7 +64,7 @@ export default function Review({ review, expanded }: IProps) {
           </span>
 
           {review.avgRate > 0 && !expanded && (
-            <div className="text-right" id='Average rating (non-expanded card)'>
+            <div className="text-right" id="Average rating (non-expanded card)">
               <Rating initialValue={review.avgRate} allowFraction readonly SVGclassName="display: inline" size={20} />
             </div>
           )}
@@ -137,7 +143,7 @@ export default function Review({ review, expanded }: IProps) {
               </div>
             </section>
 
-            <section id="Comments" className='text-left'>
+            <section id="Comments" className="text-left">
               <hr className="mb-1 mt-5 border-primary" />
               <Comments review={review} />
             </section>

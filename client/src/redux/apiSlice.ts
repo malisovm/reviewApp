@@ -69,6 +69,16 @@ export const dataApi = createApi({
       }),
       invalidatesTags: ['users'],
     }),
+    searchReviews: builder.query<string[], string>({
+      query: (payload: string) => ({
+        url: '/reviews/search',
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          search: encodeURI(payload)
+        },
+      }),
+    }),
   }),
 })
 
@@ -81,4 +91,5 @@ export const {
   useAddUserMutation,
   useAuthenticateUserMutation,
   useGetUsersQuery,
+  useLazySearchReviewsQuery
 } = dataApi

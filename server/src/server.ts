@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import express, { Request, Response } from 'express'
+// do not remove these "unused" Request/Response imports, they are used silently by TS to infer types
 import * as path from 'path'
 import mongoose, { ConnectOptions } from 'mongoose'
 import { getDate } from './utility.js'
@@ -60,6 +61,7 @@ const reviewsScheme = new Schema<IReview>({
   likes: { type: [String], required: true, default: [] },
   comments: [{ type: { user: String, text: String }, required: true, default: [] }],
 })
+reviewsScheme.index({ '$**': 'text' }) // $** === all string fields in mongoose
 const Review = mongoose.model<IReview>('Review', reviewsScheme)
 
 function averageRate(userRates: { user: string; rate: number }[]) {
@@ -77,6 +79,7 @@ async function updateLikesCount(user: string) {
   for (const review of reviews) {
     sum += review.likes.length
   }
+  console.log(user, sum)
   return sum
 }
 
@@ -154,7 +157,6 @@ app.post('/reviews', JSONParser, (req, res) => {
 
 app.put('/reviews', JSONParser, async (req, res) => {
   let updReview: IReview = req.body
-  console.log(updReview)
   Review.findOneAndUpdate(
     { _id: updReview._id },
     {
@@ -199,6 +201,17 @@ app.delete('/reviews', JSONParser, (req, res) => {
   })
 })
 
+app.get('/reviews/search', async (req, res) => {
+  if (req.headers.search) {
+    let searchQuery = decodeURI(req.headers.search as string)
+    let results = await Review.find({ $text: { $search: searchQuery } }).sort({ score: { $meta: 'textScore' } })
+    let ids: string[] = []
+    results.forEach((review) => ids.push(review._id))
+    res.send(JSON.stringify(ids))
+  }
+})
+
+// this should be after all other endpoints, do not move
 app.get('*', (_, res) => {
   res.sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'))
 })

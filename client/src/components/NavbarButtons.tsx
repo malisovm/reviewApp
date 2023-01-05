@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
-import { setTheme, setUser, setAlert, setLocale } from '../redux/localSlice'
+import { setTheme, setUser, setAlert, setLocale, setFilter } from '../redux/localSlice'
 import { useNavigate } from 'react-router-dom'
 import { initialUser } from '../redux/localSlice'
 import { DarkModeSwitch } from 'react-toggle-dark-mode'
 import useLocMsg from '../localization/useLocMsg'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined'
+import routes from '../routes'
+import { useLazySearchReviewsQuery } from '../redux/apiSlice'
 
 export default function NavbarButtons() {
   const locMsg = useLocMsg()
@@ -14,6 +16,8 @@ export default function NavbarButtons() {
   const locale = useAppSelector((state) => state.local.locale)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const [search, setSearch] = useState('')
+  const [searchReviews] = useLazySearchReviewsQuery()
 
   function toggleTheme() {
     let newTheme: string = theme === 'light' ? 'dark' : 'light'
@@ -26,14 +30,29 @@ export default function NavbarButtons() {
     else dispatch(setLocale('en'))
   }
 
+  function handleSearch() {
+    search &&
+      searchReviews(search).then((results) => {
+        results.data && dispatch(setFilter({ type: 'search', search: search, ids: results.data }))
+        navigate(routes.main)
+      })
+  }
+
   return (
-    <>
+    <div className='flex lg:flex-row flex-col flex-nowrap items-center'>
+      <span id="Search" className='flex flex-row flex-nowrap items-center'>
+        <button className="btn btn-ghost hover:btn-primary" onClick={handleSearch}>
+          {locMsg('Shared.search')}
+        </button>
+        <input type="search" className="input input-sm text-black dark:text-zinc-50 dark:bg-zinc-800" onChange={(e) => setSearch(e.target.value)} />
+      </span>
+
       {!user.name ? (
-        <li>
+        <li id="Log in">
           <a
             className="btn btn-ghost hover:btn-primary mx-1"
             onClick={() => {
-              navigate('/login')
+              navigate(routes.login)
             }}
           >
             {locMsg('Shared.logIn')}
@@ -41,11 +60,11 @@ export default function NavbarButtons() {
         </li>
       ) : (
         <>
-          <li>
+          <li id="My reviews">
             <button
               className="btn btn-ghost hover:btn-primary  mx-1"
               onClick={() => {
-                navigate('/myreviews')
+                navigate(routes.myReviews)
               }}
             >
               <span>
@@ -54,25 +73,27 @@ export default function NavbarButtons() {
               </span>
             </button>
           </li>
+
           {user.role === 'admin' && (
-            <li>
+            <li id="Admin access (userlist)">
               <button
                 className="btn btn-ghost hover:btn-primary mx-1"
                 onClick={() => {
-                  navigate('/userlist')
+                  navigate(routes.userList)
                 }}
               >
                 {locMsg('NavbarButtons.userlist')}
               </button>
             </li>
           )}
-          <li>
+
+          <li id="Log out">
             <button
               className="btn btn-ghost hover:btn-primary mx-1"
               onClick={() => {
                 dispatch(setUser(initialUser))
                 dispatch(setAlert({ text: 'You have logged out...', variant: 'alert-success' }))
-                navigate('/')
+                navigate(routes.main)
               }}
             >
               {locMsg('NavbarButtons.logOut')}
@@ -80,19 +101,21 @@ export default function NavbarButtons() {
           </li>
         </>
       )}
-      <li>
+
+      <li id="Toggle language">
         <button className="btn btn-ghost hover:btn-primary mx-1" onClick={toggleLang}>
           {locale}
         </button>
       </li>
+
       <li>
         <DarkModeSwitch
-          className="mx-1 bg-transparent"
+          className="mx-1 bg-transparent place-self-center"
           checked={theme === 'dark' ? true : false}
           onChange={toggleTheme}
-          size={52}
+          size={50}
         />
       </li>
-    </>
+    </div>
   )
 }

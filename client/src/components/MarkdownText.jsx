@@ -19,3 +19,5 @@ export default function MarkdownText({ text }) {
     />
   )
 }
+
+//re:rehypeRewrite part: https://www.npmjs.com/package/next-markdown-preview ("Disable Header links")

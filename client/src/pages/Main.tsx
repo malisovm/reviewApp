@@ -1,17 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
 import TagsCloud from '../components/TagsCloud'
 import { useGetReviewsQuery } from '../redux/apiSlice'
 import { IReview } from '../interfaces'
 import ReviewCard from '../components/ReviewCard'
 import useLocMsg from '../localization/useLocMsg'
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
+import { setFilter } from '../redux/localSlice'
+import { TagFilterType, SearchFilterType } from '../redux/localSlice'
 
 export default function Main() {
+  const dispatch = useAppDispatch()
   const locMsg = useLocMsg()
-  const { data: reviews, isLoading, isError } = useGetReviewsQuery(undefined, { pollingInterval: 5000 })
+  const { data: reviews, isLoading, isError } = useGetReviewsQuery(undefined, { pollingInterval: 5000 }) // the interval is used to update comments
   var newestReviews: IReview[] = []
   var highestRatedReviews: IReview[] = []
   var filteredReviews: IReview[] = []
-  const [filter, setFilter] = useState('')
+  var filter = useAppSelector((state) => state.local.filter)
 
   if (reviews) {
     newestReviews = [...reviews].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6)
@@ -19,7 +23,12 @@ export default function Main() {
       .filter((review) => review.avgRate > 0)
       .sort((a, b) => b.avgRate - a.avgRate)
       .slice(0, 6)
-    filteredReviews = [...reviews].filter((review) => review.tags?.includes(filter))
+    if (filter) {
+      if (filter.type === 'tag')
+        filteredReviews = [...reviews].filter((review) => review.tags?.includes((filter as TagFilterType).value))
+      else if (filter.type === 'search')
+        filteredReviews = [...reviews].filter((review) => (filter as SearchFilterType).ids.includes(review._id))
+    }
   }
 
   if (isLoading) return <button className="btn loading">{locMsg('Shared.loading')}</button>
@@ -50,6 +59,7 @@ export default function Main() {
               </article>
             </section>
           )}
+
           {!newestReviews.length ? (
             <h1 className="text-center">{locMsg('Main.noReviews')}</h1>
           ) : (
@@ -62,14 +72,17 @@ export default function Main() {
           )}
         </div>
       )}
+
       {filter && (
         <div className="flex flex-col w-5/6">
           <section className="flex flex-col justify-center">
-            <h1 className="self-center">{`#${filter}`}</h1>
+            <h1 className="self-center">
+              {filter.type === 'tag' ? `#${filter.value}` : `${locMsg('Shared.search')}: "${filter.search}"`}
+            </h1>
             <button
               className="btn btn-primary self-center w-auto"
               onClick={() => {
-                setFilter('')
+                dispatch(setFilter(null))
               }}
             >
               {locMsg('Main.cancelFilter')}
@@ -82,9 +95,10 @@ export default function Main() {
           </section>
         </div>
       )}
+
       <div>
         <h1 className="text-center">{locMsg('Shared.tags')}</h1>
-        <TagsCloud setFilter={setFilter} reviews={reviews} />
+        <TagsCloud reviews={reviews} />
       </div>
     </div>
   )

@@ -1,24 +1,24 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useGetUsersQuery } from '../redux/apiSlice'
 import { useNavigate } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
-import { useAppSelector } from '../redux/hooks'
 import { IUser } from '../interfaces'
 import useLocMsg from '../localization/useLocMsg'
+import routes from '../routes'
 
 export default function Userlist() {
   const locMsg = useLocMsg()
-  const theme = useAppSelector((state) => state.local.theme)
-  const user = useAppSelector((state) => state.local.user)
   const navigate = useNavigate()
   const { data: users, isLoading, isError } = useGetUsersQuery()
 
   function handleClick(user: IUser) {
-    navigate('/myreviews', {
+    navigate(routes.myReviews, {
       state: user,
     })
   }
+
+// component columns API: https://www.material-react-table.com/docs/getting-started/usage
 
   const columns = useMemo<MRT_ColumnDef<IUser>[]>(
     () => [

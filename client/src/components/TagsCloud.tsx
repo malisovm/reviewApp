@@ -3,6 +3,8 @@ import { TagCloud } from 'react-tagcloud'
 import { useAppSelector } from '../redux/hooks'
 import { IReview } from '../interfaces'
 import useLocMsg from '../localization/useLocMsg'
+import { useAppDispatch } from '../redux/hooks'
+import { setFilter } from '../redux/localSlice'
 
 interface ITag {
   value: string
@@ -10,11 +12,11 @@ interface ITag {
 }
 
 interface IProps {
-  setFilter: (filter: string) => void
   reviews: IReview[] | undefined
 }
 
-function TagsCloud({ setFilter, reviews }: IProps) {
+function TagsCloud({ reviews }: IProps) {
+  const dispatch = useAppDispatch()
   const locMsg = useLocMsg()
   const theme = useAppSelector((state) => state.local.theme)
   const tags = reviews?.flatMap((review) => review.tags)
@@ -47,7 +49,7 @@ function TagsCloud({ setFilter, reviews }: IProps) {
           tag-cloud="bg-white"
           tags={uniqueTagsAndCounts}
           colorOptions={{ hue: 'blue', luminosity: theme === 'dark' ? 'light' : 'bright' }}
-          onClick={(tag: ITag) => setFilter(tag.value)}
+          onClick={(tag: ITag) => dispatch(setFilter({ type: 'tag', value: tag.value }))}
         />
       ) : (
         <span className="text-white dark:text-black">{locMsg('Shared.noneYet')}</span>

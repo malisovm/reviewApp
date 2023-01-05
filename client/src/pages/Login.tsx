@@ -6,6 +6,7 @@ import { setUser, setAlert } from '../redux/localSlice'
 import { useAddUserMutation, useAuthenticateUserMutation } from '../redux/apiSlice'
 import { IUser } from '../interfaces'
 import useLocMsg from '../localization/useLocMsg'
+import routes from '../routes'
 
 export default function Login() {
   const locMsg = useLocMsg()
@@ -30,7 +31,7 @@ export default function Login() {
           results.likes = fulfilled.likes
           dispatch(setAlert({ text: fulfilled.message, variant: 'alert-success' }))
           dispatch(setUser(results))
-          navigate('/')
+          navigate(routes.main)
         })
         .catch((rejected) => {
           dispatch(setAlert({ text: rejected.data, variant: 'alert-error' }))
@@ -42,7 +43,7 @@ export default function Login() {
         .then((fulfulled) => {
           dispatch(setAlert({ text: fulfulled, variant: 'alert-success' }))
           dispatch(setUser(results))
-          navigate('/')
+          navigate(routes.main)
         })
         .catch((rejected) => {
           dispatch(setAlert({ text: rejected.data, variant: 'alert-error' }))
@@ -55,17 +56,21 @@ export default function Login() {
       <section className="bg-white dark:bg-zinc-900 rounded-xl w-64 max-w-md text-center">
         <form className="p-6 flex flex-col gap-3 w-full" onSubmit={handleSubmit(onSubmit)}>
           <h1>{locMsg('Shared.logIn')}</h1>
+
           <input {...register('name', { required: true, minLength: 3, maxLength: 30 })} autoComplete="off" />
           {errors.name && <div className="text-red-700">{locMsg('Login.usernameValidationError')}</div>}
+
           <input
             {...register('password', { required: true, minLength: 3, maxLength: 30 })}
             type="password"
             autoComplete="off"
           />
           {errors.password && <div className="text-red-700">{locMsg('Login.passwordValidationError')}</div>}
+
           <button type="submit" className="btn btn-primary">
-          {locMsg('Shared.submit')}
+            {locMsg('Shared.submit')}
           </button>
+
           <label className="label cursor-pointer mt-3">
             <span className="label-text">{locMsg('Login.createNewAccount')}</span>
             <input

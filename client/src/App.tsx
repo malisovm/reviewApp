@@ -6,14 +6,14 @@ import MyReviews from './pages/MyReviews'
 import { useAppSelector } from './redux/hooks'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
-import Message from './components/Alert'
 import Userlist from './pages/Userlist'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ruMessages } from './localization/ru'
 import { enMessages } from './localization/en'
 import { IntlProvider } from 'react-intl'
-import flatten from 'flat'
+import routes from './routes'
+import Alert from './components/Alert'
 
 export default function App() {
   const theme = useAppSelector((state) => state.local.theme)
@@ -43,22 +43,22 @@ export default function App() {
       data-theme={theme === 'dark' ? 'dark' : 'light'}
       className={`${theme === 'dark' ? 'dark' : ''} bg-stone-200 dark:bg-zinc-800 min-h-screen`}
     >
-      <IntlProvider locale={locale} messages={flatten(messages[locale as keyof typeof messages])}>
+      <IntlProvider locale={locale} messages={messages[locale as keyof typeof messages]}>
         <Navbar />
-        <Message />
+        <Alert />
         <ThemeProvider theme={muiTheme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<Main />} />
-            {!user.name && <Route path="/login" element={<Login />} />}
+            <Route path={routes.main} element={<Main />} />
+            {!user.name && <Route path={routes.login} element={<Login />} />}
             {user.name && (
               <>
-                <Route path="/revieweditor" element={<ReviewEditor />} />
-                <Route path="/myreviews" element={<MyReviews />} />
+                <Route path={routes.reviewEditor} element={<ReviewEditor />} />
+                <Route path={routes.myReviews} element={<MyReviews />} />
               </>
             )}
-            {user.role === 'admin' && <Route path="/userlist" element={<Userlist />} />}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {user.role === 'admin' && <Route path={routes.userList} element={<Userlist />} />}
+            <Route path="*" element={<Navigate to={routes.main} replace />} />
           </Routes>
         </ThemeProvider>
       </IntlProvider>

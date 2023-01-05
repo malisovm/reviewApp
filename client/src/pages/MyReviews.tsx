@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useGetReviewsQuery } from '../redux/apiSlice'
 import { useNavigate, useLocation } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
@@ -13,6 +13,7 @@ import { useDeleteReviewMutation } from '../redux/apiSlice'
 import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
 import { MRT_Localization_EN } from 'material-react-table/locales/en'
 import { MRT_Localization_RU } from 'material-react-table/locales/ru'
+import routes from '../routes'
 
 export default function MyReviews() {
   const locMsg = useLocMsg()
@@ -33,16 +34,18 @@ export default function MyReviews() {
   const tableLocalization = tableLocalizationMap[locale as keyof typeof tableLocalizationMap]
 
   function handleCreate() {
-    navigate('/revieweditor', { state: { user: user } })
+    navigate(routes.reviewEditor, { state: { user: user } })
   }
   function handleEdit(row: IReview) {
-    navigate('/revieweditor', {
+    navigate(routes.reviewEditor, {
       state: { review: row, user: user },
     })
   }
   function handleDelete(row: IReview) {
     deleteReview(row)
   }
+
+  // component columns API: https://www.material-react-table.com/docs/getting-started/usage
 
   const columns = useMemo<MRT_ColumnDef<IReview>[]>(
     () => [

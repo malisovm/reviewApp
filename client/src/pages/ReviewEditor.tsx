@@ -12,23 +12,23 @@ import Chip from '@mui/material/Chip'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
+import routes from '../routes'
 
 export default function ReviewEditor() {
   const locMsg = useLocMsg()
-  const { state } = useLocation()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const { data: reviews } = useGetReviewsQuery()
+  const [addReview] = useAddReviewMutation()
+  const [editReview] = useEditReviewMutation()
+  const theme = useAppSelector((state) => state.local.theme)
+  const { state } = useLocation() // this state is the props passed via react router if the component was launched in "edit" mode
   const user = state.user
   var review: IReview | undefined = undefined
   if (state && state.review) review = state.review
-  const [addReview] = useAddReviewMutation()
-  const [editReview] = useEditReviewMutation()
-  const { data: reviews } = useGetReviewsQuery()
   const [newReviewTags, setNewReviewTags] = useState<string[]>([])
-  const [resetTags, setResetTags] = useState<string>(Math.random().toString())
-  const navigate = useNavigate()
   const [text, setText] = useState(review ? review.text : '')
-  const theme = useAppSelector((state) => state.local.theme)
   const [pic, setPic] = useState<string>()
-  const dispatch = useAppDispatch()
 
   const {
     register,
@@ -36,8 +36,6 @@ export default function ReviewEditor() {
     handleSubmit,
     reset,
     setValue: setFieldValue,
-    setError: setFieldError,
-    clearErrors: clearFieldErrors,
   } = useForm<IReview>()
 
   useEffect(() => {
@@ -50,7 +48,6 @@ export default function ReviewEditor() {
   }
 
   const onSubmit: SubmitHandler<IReview> = (newReview) => {
-    console.log('NEW REVIEW', newReview)
     newReview.tags = newReviewTags
     newReview.pic = pic
     newReview.user = user.name
@@ -62,9 +59,8 @@ export default function ReviewEditor() {
       addReview(newReview)
     }
     reset()
-    setResetTags(Math.random().toString())
     dispatch(setAlert({ text: !review ? 'New review added' : 'Review updated', variant: 'alert-success' }))
-    navigate('/myreviews', { state: user })
+    navigate(routes.myReviews, { state: user })
   }
 
   const uniqueTags = [...new Set(reviews?.flatMap((review) => review.tags))]
@@ -113,7 +109,9 @@ export default function ReviewEditor() {
                   {locMsg(`ReviewEditor.selectInputs.${selectInput}Placeholder` as LocMsgKey)}
                 </option>
                 {inputOptions.map((option, index) => (
-                  <option key={index} value={option}>{selectInput === 'group' ? locMsg(`Shared.${option}` as LocMsgKey) : option}</option>
+                  <option key={index} value={option}>
+                    {selectInput === 'group' ? locMsg(`Shared.${option}` as LocMsgKey) : option}
+                  </option>
                 ))}
               </select>
               {errors[selectInput as keyof IReview] && (
@@ -168,7 +166,6 @@ export default function ReviewEditor() {
               renderInput={(params) => (
                 <TextField {...params} variant="filled" placeholder={locMsg('ReviewEditor.tagsPlaceholder')} />
               )}
-              key={resetTags}
             />
           </label>
 

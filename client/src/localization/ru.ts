@@ -11,6 +11,7 @@ export const ruMessages: typeof enMessages = {
   'Shared.books': 'Книги',
   'Shared.movies': 'Фильмы',
   'Shared.games': 'Игры',
+  'Shared.search': 'Поиск',
 
   'Login.usernameValidationError': 'Имя должно быть от 3 до 30 символов',
   'Login.passwordValidationError': 'Пароль должен быть от 3 до 3 символов',

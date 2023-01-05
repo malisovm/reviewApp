@@ -9,6 +9,7 @@ export const enMessages = {
   'Shared.books': 'Books',
   'Shared.movies': 'Movies',
   'Shared.games': 'Games',
+  'Shared.search': 'Search',
 
   'Login.usernameValidationError': 'Username must be 3-30 symbols long',
   'Login.passwordValidationError': 'Password must be 3-30 symbols long',
@@ -39,7 +40,7 @@ export const enMessages = {
   'ReviewEditor.defaultReviewText': '**Write your review here** (*Markdown syntax supported*)',
   'ReviewEditor.seePreview': 'See preview',
   'ReviewEditor.pic': 'Pic',
-  'ReviewEditor.tagsPlaceholder': 'Type and Enter to add new tag',
+  'ReviewEditor.tagsPlaceholder': 'Press Enter to add a new tag',
   'ReviewEditor.textInputs.title': 'Title',
   'ReviewEditor.textInputs.titlePlaceholder': 'Enter title',
   'ReviewEditor.textInputs.product': 'Product',

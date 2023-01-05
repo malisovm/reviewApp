@@ -17,7 +17,6 @@
     "@types/react-dom": "^18.0.9",
     "@uiw/react-md-editor": "^3.19.8",
     "daisyui": "^2.42.1",
-    "flat": "^5.0.2",
     "material-react-table": "^1.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
