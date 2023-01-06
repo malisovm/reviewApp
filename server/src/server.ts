@@ -1,10 +1,10 @@
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import express, { Request, Response } from 'express'
-// do not remove these "unused" Request/Response imports, they are used silently by TS to infer types
 import * as path from 'path'
 import mongoose, { ConnectOptions } from 'mongoose'
 import { getDate } from './utility.js'
+import { Error as MongooseError } from 'mongoose'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -64,25 +64,6 @@ const reviewsScheme = new Schema<IReview>({
 reviewsScheme.index({ '$**': 'text' }) // $** === all string fields in mongoose
 const Review = mongoose.model<IReview>('Review', reviewsScheme)
 
-function averageRate(userRates: { user: string; rate: number }[]) {
-  if (userRates.length === 0) return 0
-  let sum = 0
-  for (const userRate of userRates) {
-    sum += userRate.rate
-  }
-  return sum / userRates.length
-}
-
-async function updateLikesCount(user: string) {
-  let sum = 0
-  let reviews: IReview[] = await Review.find({ user: user })
-  for (const review of reviews) {
-    sum += review.likes.length
-  }
-  console.log(user, sum)
-  return sum
-}
-
 app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 const JSONParser = express.json({ type: 'application/json' })
 mongoose.connect(
@@ -98,8 +79,38 @@ mongoose.connect(
   },
 )
 
-app.get('/users', (_, res) => {
-  User.find({}, (err: any, docs: any) => {
+function averageRate(userRates: { user: string; rate: number }[]) {
+  if (userRates.length === 0) return 0
+  let sum = 0
+  for (const userRate of userRates) {
+    sum += userRate.rate
+  }
+  return sum / userRates.length
+}
+
+function updateUserLikesCount(username: string) {
+  Review.find({ user: username }, (err: MongooseError, reviews: IReview[]) => {
+    if (err) console.log(err)
+    else {
+      let sum = 0
+      for (const review of reviews) {
+        sum += review.likes.length
+      }
+      User.findOneAndUpdate(
+        { name: username },
+        {
+          likes: sum,
+        },
+        (err: MongooseError) => {
+          err && console.log(err)
+        },
+      )
+    }
+  })
+}
+
+app.get('/users', (_, res: Response) => {
+  User.find({}, (err: MongooseError, docs: IUser[]) => {
     if (err) {
       console.log(err)
       res.status(400).send(JSON.stringify(err))
@@ -107,7 +118,7 @@ app.get('/users', (_, res) => {
   })
 })
 
-app.post('/users/login', JSONParser, async (req, res) => {
+app.post('/users/login', JSONParser, async (req: Request, res: Response) => {
   let user = new User(req.body)
   let existingUser = await User.findOne({
     name: { $eq: user.name },
@@ -123,7 +134,7 @@ app.post('/users/login', JSONParser, async (req, res) => {
   }
 })
 
-app.post('/users/newuser', JSONParser, async (req, res) => {
+app.post('/users/newuser', JSONParser, async (req: Request, res: Response) => {
   let newUser = new User(req.body)
   let existingUser = await User.findOne({
     name: { $eq: newUser.name },
@@ -137,8 +148,8 @@ app.post('/users/newuser', JSONParser, async (req, res) => {
   } else res.status(400).send('Username already exists')
 })
 
-app.get('/reviews', (_, res) => {
-  Review.find({}, (err: any, docs: any) => {
+app.get('/reviews', (_, res: Response) => {
+  Review.find({}, (err: MongooseError, docs: IReview[]) => {
     if (err) {
       console.log(err)
       res.status(400).send(JSON.stringify(err))
@@ -146,7 +157,7 @@ app.get('/reviews', (_, res) => {
   })
 })
 
-app.post('/reviews', JSONParser, (req, res) => {
+app.post('/reviews', JSONParser, (req: Request, res: Response) => {
   let newReview = new Review(req.body)
   newReview.save().then(() => {
     let message = 'New review posted'
@@ -155,7 +166,7 @@ app.post('/reviews', JSONParser, (req, res) => {
   })
 })
 
-app.put('/reviews', JSONParser, async (req, res) => {
+app.put('/reviews', JSONParser, (req: Request, res: Response) => {
   let updReview: IReview = req.body
   Review.findOneAndUpdate(
     { _id: updReview._id },
@@ -172,36 +183,29 @@ app.put('/reviews', JSONParser, async (req, res) => {
       likes: updReview.likes,
       comments: updReview.comments,
     },
-    (err: any) => {
+    (err: MongooseError) => {
       if (err) console.log(err)
       else {
+        updateUserLikesCount(updReview.user)
         res.send('Review updated')
         console.log('Review updated')
       }
     },
   )
-  User.findOneAndUpdate(
-    { name: updReview.user },
-    {
-      likes: await updateLikesCount(updReview.user),
-    },
-    (err: any) => {
-      if (err) console.log(err)
-    },
-  )
 })
 
-app.delete('/reviews', JSONParser, (req, res) => {
-  Review.findOneAndDelete({ _id: req.headers._id }, (err: any) => {
+app.delete('/reviews', JSONParser, (req: Request, res: Response) => {
+  Review.findOneAndDelete({ _id: req.headers._id }, (err: MongooseError) => {
     if (err) console.log(err)
     else {
+      updateUserLikesCount(req.headers.user as string)
       res.send('Review deleted')
       console.log('Review deleted')
     }
   })
 })
 
-app.get('/reviews/search', async (req, res) => {
+app.get('/reviews/search', async (req: Request, res: Response) => {
   if (req.headers.search) {
     let searchQuery = decodeURI(req.headers.search as string)
     let results = await Review.find({ $text: { $search: searchQuery } }).sort({ score: { $meta: 'textScore' } })

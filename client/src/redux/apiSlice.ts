@@ -39,6 +39,7 @@ export const dataApi = createApi({
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
           _id: payload._id,
+          user: payload.user
         },
       }),
       invalidatesTags: ['reviews'],
