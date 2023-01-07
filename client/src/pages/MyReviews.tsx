@@ -3,7 +3,7 @@ import { useGetReviewsQuery } from '../redux/apiSlice'
 import { useNavigate, useLocation } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
-import { useAppSelector } from '../redux/hooks'
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { IReview } from '../interfaces'
 import Modal from '../components/Modal'
 import Review from '../components/Review'
@@ -14,8 +14,10 @@ import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
 import { MRT_Localization_EN } from 'material-react-table/locales/en'
 import { MRT_Localization_RU } from 'material-react-table/locales/ru'
 import routes from '../routes'
+import { setUser } from '../redux/localSlice'
 
 export default function MyReviews() {
+  const dispatch = useAppDispatch()
   const locMsg = useLocMsg()
   var user = useAppSelector((state) => state.local.user)
   var locale = useAppSelector((state) => state.local.locale)
@@ -43,6 +45,15 @@ export default function MyReviews() {
   }
   function handleDelete(row: IReview) {
     deleteReview(row)
+      .unwrap()
+      .then((fulfilled: any) => {
+        if (!adminViewUser) {
+          let updUser = JSON.parse(JSON.stringify(user))
+          updUser.likes = fulfilled.newLikesCount
+          dispatch(setUser(updUser))
+        }
+        navigate(routes.main)
+      })
   }
 
   // component columns API: https://www.material-react-table.com/docs/getting-started/usage

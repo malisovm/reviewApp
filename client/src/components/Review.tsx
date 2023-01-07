@@ -22,7 +22,6 @@ export default function Review({ review, expanded }: IProps) {
   const existingRating = review.ratings.find((rating) => rating.user === user.name)
 
   function handleRating(inputRate: number) {
-    console.log('handle rating')
     let inputRating = { user: user.name, rate: inputRate }
     let newReview: IReview = JSON.parse(JSON.stringify(review))
     let exsRatingInNewRev = newReview.ratings.find((rating) => rating.user === user.name)
@@ -33,7 +32,6 @@ export default function Review({ review, expanded }: IProps) {
   }
 
   function handleLike() {
-    console.log('handle like')
     let newReview: IReview = JSON.parse(JSON.stringify(review))
     let exsLikeIndex = newReview.likes.findIndex((like) => like === user.name)
     if (exsLikeIndex >= 0) newReview.likes.splice(exsLikeIndex, 1)

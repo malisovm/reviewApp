@@ -88,25 +88,22 @@ function averageRate(userRates: { user: string; rate: number }[]) {
   return sum / userRates.length
 }
 
-function updateUserLikesCount(username: string) {
-  Review.find({ user: username }, (err: MongooseError, reviews: IReview[]) => {
-    if (err) console.log(err)
-    else {
-      let sum = 0
-      for (const review of reviews) {
-        sum += review.likes.length
-      }
-      User.findOneAndUpdate(
-        { name: username },
-        {
-          likes: sum,
-        },
-        (err: MongooseError) => {
-          err && console.log(err)
-        },
-      )
-    }
-  })
+async function updateUserLikesCount(username: string) {
+  let sum = 0
+  let reviews = await Review.find({ user: username })
+  for (const review of reviews) {
+    sum += review.likes.length
+  }
+  User.findOneAndUpdate(
+    { name: username },
+    {
+      likes: sum,
+    },
+    (err: MongooseError) => {
+      err && console.log(err)
+    },
+  )
+  return sum
 }
 
 app.get('/users', (_, res: Response) => {
@@ -195,11 +192,11 @@ app.put('/reviews', JSONParser, (req: Request, res: Response) => {
 })
 
 app.delete('/reviews', JSONParser, (req: Request, res: Response) => {
-  Review.findOneAndDelete({ _id: req.headers._id }, (err: MongooseError) => {
+  Review.findOneAndDelete({ _id: req.headers._id }, async (err: MongooseError) => {
     if (err) console.log(err)
     else {
-      updateUserLikesCount(req.headers.user as string)
-      res.send('Review deleted')
+      let newLikesCount = await updateUserLikesCount(req.headers.user as string)
+      res.send(JSON.stringify({ message: 'Review deleted', newLikesCount: newLikesCount }))
       console.log('Review deleted')
     }
   })

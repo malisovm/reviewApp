@@ -42,7 +42,7 @@ export const dataApi = createApi({
           user: payload.user
         },
       }),
-      invalidatesTags: ['reviews'],
+      invalidatesTags: ['reviews', 'users'],
     }),
     getUsers: builder.query<IUser[], void>({
       query: (arg: void) => '/users',

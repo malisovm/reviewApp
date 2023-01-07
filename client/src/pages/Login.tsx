@@ -40,8 +40,8 @@ export default function Login() {
       results.role = 'user'
       addUser(results)
         .unwrap()
-        .then((fulfulled) => {
-          dispatch(setAlert({ text: fulfulled, variant: 'alert-success' }))
+        .then((fulfilled) => {
+          dispatch(setAlert({ text: fulfilled, variant: 'alert-success' }))
           dispatch(setUser(results))
           navigate(routes.main)
         })

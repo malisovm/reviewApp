@@ -13,9 +13,11 @@ export default function Userlist() {
   const { data: users, isLoading, isError } = useGetUsersQuery()
 
   function handleClick(user: IUser) {
+    if (user.role !== 'admin') {
     navigate(routes.myReviews, {
       state: user,
-    })
+    })}
+    else navigate(routes.myReviews)
   }
 
 // component columns API: https://www.material-react-table.com/docs/getting-started/usage
