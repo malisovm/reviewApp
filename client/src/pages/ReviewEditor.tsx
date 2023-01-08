@@ -50,7 +50,7 @@ export default function ReviewEditor() {
   const onSubmit: SubmitHandler<IReview> = (newReview) => {
     newReview.tags = newReviewTags
     newReview.pic = pic
-    newReview.user = user.name
+    newReview.username = user.username
     if (review) {
       newReview._id = review._id
       newReview.ratings = review.ratings

@@ -25,7 +25,7 @@ export default function Userlist() {
   const columns = useMemo<MRT_ColumnDef<IUser>[]>(
     () => [
       {
-        accessorFn: (row) => row.name,
+        accessorFn: (row) => row.username,
         header: 'Name',
         Header: <b className="text-primary">{locMsg('Userlist.name')}</b>,
         Cell: ({ cell }) => (
@@ -35,7 +35,7 @@ export default function Userlist() {
               handleClick(cell.row.original)
             }}
           >
-            {cell.row.original.name}
+            {cell.row.original.username}
           </span>
         ),
       },

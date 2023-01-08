@@ -47,7 +47,7 @@ export default function NavbarButtons() {
         <input type="search" className="input input-sm text-black dark:text-zinc-50 dark:bg-zinc-800" onChange={(e) => setSearch(e.target.value)} />
       </span>
 
-      {!user.name ? (
+      {!user.username ? (
         <li id="Log in">
           <a
             className="btn btn-ghost hover:btn-primary mx-1"
@@ -68,7 +68,7 @@ export default function NavbarButtons() {
               }}
             >
               <span>
-                {user.name} &nbsp; <ThumbUpOutlinedIcon fontSize="small" className="align-text-top" />
+                {user.username} &nbsp; <ThumbUpOutlinedIcon fontSize="small" className="align-text-top" />
                 {user.likes}
               </span>
             </button>
@@ -92,6 +92,7 @@ export default function NavbarButtons() {
               className="btn btn-ghost hover:btn-primary mx-1"
               onClick={() => {
                 dispatch(setUser(initialUser))
+                localStorage.removeItem('token')
                 dispatch(setAlert({ text: 'You have logged out...', variant: 'alert-success' }))
                 navigate(routes.main)
               }}

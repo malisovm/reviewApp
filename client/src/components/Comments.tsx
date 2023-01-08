@@ -31,10 +31,10 @@ export default function Comments({ review }: IProps) {
   } = useForm<IComment>()
 
   const onSubmit: SubmitHandler<{ text: string }> = (inputComment) => {
-    let newComment = { user: user.name, text: inputComment.text }
+    let newComment = { user: user.username, text: inputComment.text }
     let newReview: IReview = JSON.parse(JSON.stringify(review))
     newReview.comments.push(newComment)
-    user.name && editReview(newReview)
+    user.username && editReview(newReview)
   }
 
   function handleDelete(_id?: string) {
@@ -56,7 +56,7 @@ export default function Comments({ review }: IProps) {
             </div>
             <div className="chat-bubble bg-primary mb-2 text-zinc-50 flex flex-row">
               {comment.text}
-              {(comment.user === user.name || user.role === 'admin') && (
+              {(comment.user === user.username || user.role === 'admin') && (
                 <button className="ml-1 self-start" onClick={() => handleDelete(comment._id)}>
                   <DeleteIcon />
                 </button>
@@ -64,7 +64,7 @@ export default function Comments({ review }: IProps) {
             </div>
           </div>
         ))}
-      {user.name && (
+      {user.username && (
         <form onSubmit={handleSubmit(onSubmit)} className="mt-3 ml-3">
           <label>
             {locMsg('Comments.addComment')}:

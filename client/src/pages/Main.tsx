@@ -1,12 +1,11 @@
 import React from 'react'
 import TagsCloud from '../components/TagsCloud'
 import { useGetReviewsQuery } from '../redux/apiSlice'
-import { IReview } from '../interfaces'
+import { IReview, TagFilterType, SearchFilterType } from '../interfaces'
 import ReviewCard from '../components/ReviewCard'
 import useLocMsg from '../localization/useLocMsg'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { setFilter } from '../redux/localSlice'
-import { TagFilterType, SearchFilterType } from '../redux/localSlice'
 
 export default function Main() {
   const dispatch = useAppDispatch()

@@ -5,7 +5,10 @@ import * as path from 'path'
 import mongoose, { ConnectOptions } from 'mongoose'
 import { Error as MongooseError } from 'mongoose'
 import { User, Review } from './schemas.js'
-import { IUser, IReview } from "./interfaces.js";
+import { IUser, IReview, IUserResponse, IUserDocument } from './interfaces.js'
+import passport from 'passport'
+import session from 'express-session'
+import jwt from 'jsonwebtoken'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -28,6 +31,21 @@ mongoose.connect(
   },
 )
 
+const secret = 'bla bla bla'
+
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: true,
+    secret: secret,
+  }),
+)
+app.use(passport.initialize())
+app.use(passport.session())
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+passport.use(User.createStrategy()) // 'local' strategy
+
 function averageRate(userRates: { user: string; rate: number }[]) {
   if (userRates.length === 0) return 0
   let sum = 0
@@ -39,12 +57,12 @@ function averageRate(userRates: { user: string; rate: number }[]) {
 
 async function updateUserLikesCount(username: string) {
   let sum = 0
-  let reviews = await Review.find({ user: username })
+  let reviews = await Review.find({ username: username })
   for (const review of reviews) {
     sum += review.likes.length
   }
   User.findOneAndUpdate(
-    { name: username },
+    { username: username },
     {
       likes: sum,
     },
@@ -64,34 +82,79 @@ app.get('/users', (_, res: Response) => {
   })
 })
 
-app.post('/users/login', JSONParser, async (req: Request, res: Response) => {
-  let user = new User(req.body)
-  let existingUser = await User.findOne({
-    name: { $eq: user.name },
-  }).exec()
-  if (existingUser && user.password === existingUser.password) {
-    res.send(
-      JSON.stringify({ message: `Logged in as ${user.name}`, role: existingUser.role, likes: existingUser.likes }),
-    )
-  } else if (!existingUser) {
-    res.status(400).send(JSON.stringify(`The username doesn't exist`))
-  } else if (user.password !== existingUser.password) {
-    res.status(400).send(JSON.stringify(`Wrong password`))
-  }
+app.post('/users/login', JSONParser, (req, res) => {
+  passport.authenticate('local', (err, user) => {
+    if (err) {
+      res.json('Authentication error:' + err)
+    } else {
+      if (!user) {
+        res.status(400).json('Incorrect username or password')
+      } else {
+        const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '24h' })
+        res.json({
+          message: `Logged in as ${user.username}`,
+          username: user.username,
+          role: user.role,
+          likes: user.likes,
+          token: token,
+        })
+      }
+    }
+  })(req, res)
 })
 
-app.post('/users/newuser', JSONParser, async (req: Request, res: Response) => {
-  let newUser = new User(req.body)
-  let existingUser = await User.findOne({
-    name: { $eq: newUser.name },
-  }).exec()
-  if (!existingUser) {
-    newUser.save().then(() => {
-      let message = 'New account created'
-      console.log(message)
-      res.status(200).send(JSON.stringify(message))
+app.post('/users/newuser', JSONParser, (req: Request, res: Response) => {
+  User.register(new User({ username: req.body.username }), req.body.password, (err, user) => {
+    if (err) {
+      console.log('Error during account registration: ' + err)
+      res.status(400).json('Error during account registration: ' + err)
+    } else {
+      req.login(user, (err) => {
+        if (err) res.status(400).json('Error establishing session:' + err)
+        else {
+          const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '24h' })
+          res.json({
+            message: 'New account created',
+            username: user.username,
+            role: user.role,
+            likes: user.likes,
+            token: token,
+          })
+        }
+      })
+    }
+  })
+})
+
+app.post('/users/socialauth/google', JSONParser, async (req, res) => {
+  let username = req.body.username
+  User.findOne({ username: username }, (err: MongooseError, user: IUserDocument) => {
+    if (user) {
+      const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '24h' })
+      const userResponse: IUserResponse = { ...user._doc, token: token, message: `Logged in as ${user._doc.username}` }
+      res.json(userResponse)
+    } else {
+      let newGoogleUser = new User({ username: username })
+      newGoogleUser.save((err: MongooseError, user: IUserDocument) => {
+        const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '24h' })
+        const userResponse: IUserResponse = {
+          ...user._doc,
+          token: token,
+          message: 'New google account created',
+        }
+        res.json(userResponse)
+      })
+    }
+  })
+})
+
+app.post('/users/checksession', (req: Request, res: Response) => {
+  let token = req.headers.token as string
+  jwt.verify(token, secret, (err, decoded: any) => {
+    User.findOne({ _id: decoded.userId }, (err: MongooseError, user: IUser) => {
+      user && res.send(user)
     })
-  } else res.status(400).send('Username already exists')
+  })
 })
 
 app.get('/reviews', (_, res: Response) => {
@@ -132,7 +195,7 @@ app.put('/reviews', JSONParser, (req: Request, res: Response) => {
     (err: MongooseError) => {
       if (err) console.log(err)
       else {
-        updateUserLikesCount(updReview.user)
+        updateUserLikesCount(updReview.username)
         res.send('Review updated')
         console.log('Review updated')
       }
@@ -144,7 +207,7 @@ app.delete('/reviews', JSONParser, (req: Request, res: Response) => {
   Review.findOneAndDelete({ _id: req.headers._id }, async (err: MongooseError) => {
     if (err) console.log(err)
     else {
-      let newLikesCount = await updateUserLikesCount(req.headers.user as string)
+      let newLikesCount = await updateUserLikesCount(req.headers.username as string)
       res.send(JSON.stringify({ message: 'Review deleted', newLikesCount: newLikesCount }))
       console.log('Review deleted')
     }

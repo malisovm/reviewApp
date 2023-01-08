@@ -1,3 +1,5 @@
+import { Document } from "mongoose"
+
 export interface IReview {
   _id: string
   title: string
@@ -7,18 +9,27 @@ export interface IReview {
   text: string
   pic?: string
   verdict: number
-  user: string
+  username: string
   date: string
-  ratings: { user: string; rate: number }[]
+  ratings: { _id?: string; user: string; rate: number }[]
+  avgRate: number
   likes: string[]
-  avgRate?: number
-  comments: { user: string; text: string }[]
+  comments: { _id?: string; user: string; text: string }[]
 }
 
 export interface IUser {
   _id: string
-  name: string
+  username: string
   password: string
   role: string
   likes: number
+}
+
+export interface IUserResponse extends IUser {
+  message: string
+  token: string
+}
+
+export interface IUserDocument extends Document {
+  _doc: IUser
 }

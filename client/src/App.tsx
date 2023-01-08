@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import ReviewEditor from './pages/ReviewEditor'
 import Main from './pages/Main'
 import MyReviews from './pages/MyReviews'
-import { useAppSelector } from './redux/hooks'
+import { useAppSelector, useAppDispatch } from './redux/hooks'
 import Login from './pages/Login'
 import Navbar from './components/Navbar'
 import Userlist from './pages/Userlist'
@@ -14,11 +14,25 @@ import { enMessages } from './localization/en'
 import { IntlProvider } from 'react-intl'
 import routes from './routes'
 import Alert from './components/Alert'
+import { useCheckSessionMutation } from './redux/apiSlice'
+import { setUser } from './redux/localSlice'
 
 export default function App() {
   const theme = useAppSelector((state) => state.local.theme)
   const user = useAppSelector((state) => state.local.user)
   const locale = useAppSelector((state) => state.local.locale)
+  const dispatch = useAppDispatch()
+  const [checkSession] = useCheckSessionMutation()
+
+  useEffect(() => {
+    var token = localStorage.getItem('token')
+    token &&
+      checkSession(token)
+        .unwrap()
+        .then((result) => {
+          dispatch(setUser(result))
+        })
+  }, [])
 
   const muiTheme = React.useMemo(
     () =>
@@ -50,8 +64,8 @@ export default function App() {
           <CssBaseline />
           <Routes>
             <Route path={routes.main} element={<Main />} />
-            {!user.name && <Route path={routes.login} element={<Login />} />}
-            {user.name && (
+            {!user.username && <Route path={routes.login} element={<Login />} />}
+            {user.username && (
               <>
                 <Route path={routes.reviewEditor} element={<ReviewEditor />} />
                 <Route path={routes.myReviews} element={<MyReviews />} />

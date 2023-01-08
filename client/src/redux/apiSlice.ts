@@ -39,7 +39,7 @@ export const dataApi = createApi({
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
           _id: payload._id,
-          user: payload.user
+          username: payload.username,
         },
       }),
       invalidatesTags: ['reviews', 'users'],
@@ -59,6 +59,17 @@ export const dataApi = createApi({
       }),
       invalidatesTags: ['reviews'],
     }),
+    socialAuth: builder.mutation<string, any>({
+      query: (payload: any) => ({
+        url: `/users/socialauth/${payload.socialNetwork}`,
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }),
+      invalidatesTags: ['reviews'],
+    }),
     addUser: builder.mutation<string, IUser>({
       query: (payload: IUser) => ({
         url: '/users/newuser',
@@ -70,13 +81,23 @@ export const dataApi = createApi({
       }),
       invalidatesTags: ['users'],
     }),
+    checkSession: builder.mutation<IUser, string>({
+      query: (payload: string) => ({
+        url: '/users/checksession',
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          token: payload
+        },
+      }),
+    }),
     searchReviews: builder.query<string[], string>({
       query: (payload: string) => ({
         url: '/reviews/search',
         method: 'GET',
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
-          search: encodeURI(payload)
+          search: encodeURI(payload),
         },
       }),
     }),
@@ -92,5 +113,7 @@ export const {
   useAddUserMutation,
   useAuthenticateUserMutation,
   useGetUsersQuery,
-  useLazySearchReviewsQuery
+  useLazySearchReviewsQuery,
+  useCheckSessionMutation,
+  useSocialAuthMutation
 } = dataApi

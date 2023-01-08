@@ -27,7 +27,7 @@ export default function MyReviews() {
   const { data: reviews, isLoading, isError } = useGetReviewsQuery()
   const [deleteReview] = useDeleteReviewMutation()
 
-  const userReviews = reviews?.filter((review) => review.user === user.name)
+  const userReviews = reviews?.filter((review) => review.username === user.username)
 
   const tableLocalizationMap = {
     en: MRT_Localization_EN,
@@ -133,7 +133,7 @@ export default function MyReviews() {
       <h1 className="place-self-center">
         {!adminViewUser
           ? locMsg('MyReviews.yourReviews')
-          : locMsg('MyReviews.usernameReviews', { username: user.name })}
+          : locMsg('MyReviews.usernameReviews', { username: user.username })}
       </h1>
       <div className="place-self-center mb-7 w-5/6 max-w-5xl">
         <MaterialReactTable localization={tableLocalization} columns={columns} data={userReviews as IReview[]} />

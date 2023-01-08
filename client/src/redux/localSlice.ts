@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { IState, FilterType } from '../interfaces'
 
 var initialTheme: string | null
 if (
@@ -9,19 +10,7 @@ if (
   initialTheme = 'dark'
 else initialTheme = 'light'
 
-export const initialUser = { name: '', role: 'unauthorized', likes: 0 }
-
-export type TagFilterType = { type: 'tag', value: string }
-export type SearchFilterType = {type: 'search', search: string, ids: string[] }
-type FilterType = TagFilterType | SearchFilterType | null
-
-interface IState {
-  theme: string | null,
-  locale: string,
-  user: {name: string, role: string, likes:number},
-  alert: {text: string, variant: string},
-  filter: FilterType
-}
+export const initialUser = { username: '', role: 'unauthorized', likes: 0 }
 
 const initialState: IState = {
   theme: initialTheme,
@@ -41,7 +30,7 @@ const localSlice = createSlice({
     setTheme(state, action: PayloadAction<string>) {
       state.theme = action.payload
     },
-    setUser(state, action: PayloadAction<{ name: string; role: string, likes: number }>) {
+    setUser(state, action: PayloadAction<{ username: string; role: string, likes: number }>) {
       state.user = action.payload
     },
     setAlert(state, action: PayloadAction<{ text: string; variant: string }>) {

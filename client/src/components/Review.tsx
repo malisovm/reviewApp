@@ -19,12 +19,12 @@ export default function Review({ review, expanded }: IProps) {
   const locMsg = useLocMsg()
   const user = useAppSelector((state) => state.local.user)
   const [editReview] = useEditReviewMutation()
-  const existingRating = review.ratings.find((rating) => rating.user === user.name)
+  const existingRating = review.ratings.find((rating) => rating.user === user.username)
 
   function handleRating(inputRate: number) {
-    let inputRating = { user: user.name, rate: inputRate }
+    let inputRating = { user: user.username, rate: inputRate }
     let newReview: IReview = JSON.parse(JSON.stringify(review))
-    let exsRatingInNewRev = newReview.ratings.find((rating) => rating.user === user.name)
+    let exsRatingInNewRev = newReview.ratings.find((rating) => rating.user === user.username)
     if (exsRatingInNewRev) exsRatingInNewRev.rate = inputRating.rate
     else newReview.ratings.push(inputRating)
     console.log(newReview)
@@ -33,9 +33,9 @@ export default function Review({ review, expanded }: IProps) {
 
   function handleLike() {
     let newReview: IReview = JSON.parse(JSON.stringify(review))
-    let exsLikeIndex = newReview.likes.findIndex((like) => like === user.name)
+    let exsLikeIndex = newReview.likes.findIndex((like) => like === user.username)
     if (exsLikeIndex >= 0) newReview.likes.splice(exsLikeIndex, 1)
-    else newReview.likes.push(user.name)
+    else newReview.likes.push(user.username)
     editReview(newReview)
   }
 
@@ -87,7 +87,7 @@ export default function Review({ review, expanded }: IProps) {
       <footer className="mr-5 mb-2 text-right">
         <section id="Name and date" className="italic">
           <div>
-            <PersonOutlineIcon /> {review.user}
+            <PersonOutlineIcon /> {review.username}
           </div>
           <div className="italic text-sm mb-3">{review.date}</div>
         </section>
@@ -103,16 +103,16 @@ export default function Review({ review, expanded }: IProps) {
         {expanded && (
           <>
             <section id="Likes" className="my-3">
-              <button onClick={handleLike} disabled={user.name && review.user !== user.name ? false : true}>
+              <button onClick={handleLike} disabled={user.username && review.username !== user.username ? false : true}>
                 <ThumbUpOutlinedIcon
-                  className={`${review.likes.includes(user.name) ? 'text-primary' : 'text-zinc-200'} align-text-top`}
+                  className={`${review.likes.includes(user.username) ? 'text-primary' : 'text-zinc-200'} align-text-top`}
                 />
               </button>
               {review.likes.length}
             </section>
 
             <section id="Ratings">
-              {user.name && review.user !== user.name && (
+              {user.username && review.username !== user.username && (
                 <div id="User rating">
                   <div>{locMsg('Review.yourRate')}:</div>
                   <Rating
