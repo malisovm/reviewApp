@@ -28,11 +28,13 @@ export default function Comments({ review }: IProps) {
     register,
     formState: { errors },
     handleSubmit,
+    reset
   } = useForm<IComment>()
 
   const onSubmit: SubmitHandler<{ text: string }> = (inputComment) => {
     let newComment = { user: user.username, text: inputComment.text }
     let newReview: IReview = JSON.parse(JSON.stringify(review))
+    reset()
     newReview.comments.push(newComment)
     user.username && editReview(newReview)
   }

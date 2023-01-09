@@ -47,6 +47,8 @@ export const ruMessages: typeof enMessages = {
   'ReviewEditor.textInputs.titlePlaceholder': 'Введите заголовок',
   'ReviewEditor.textInputs.product': 'Произведение',
   'ReviewEditor.textInputs.productPlaceholder': 'Введите название произведения',
+  'ReviewEditor.textInputs.fieldEmpty': 'Это обязательное поле',
+  'ReviewEditor.textInputs.fieldTooLong': 'Превышен лимит символов',
   'ReviewEditor.text': 'Текст',
   'ReviewEditor.selectInputs.group': 'Категория',
   'ReviewEditor.selectInputs.groupPlaceholder': 'Выберите категорию',

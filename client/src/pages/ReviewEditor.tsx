@@ -89,8 +89,8 @@ export default function ReviewEditor() {
                 {errors[input as keyof IReview] && (
                   <div className="text-red-700">
                     {errors[input as keyof IReview]?.type === 'required'
-                      ? 'Please fill in this field'
-                      : 'This field is too long'}
+                      ? locMsg('ReviewEditor.textInputs.fieldEmpty')
+                      : locMsg('ReviewEditor.textInputs.fieldTooLong')}
                   </div>
                 )}
               </div>

@@ -45,6 +45,8 @@ export const enMessages = {
   'ReviewEditor.textInputs.titlePlaceholder': 'Enter title',
   'ReviewEditor.textInputs.product': 'Product',
   'ReviewEditor.textInputs.productPlaceholder': 'Enter product',
+  'ReviewEditor.textInputs.fieldEmpty': 'Please fill in this field',
+  'ReviewEditor.textInputs.fieldTooLong': 'This field is too long',
   'ReviewEditor.text': 'Text',
   'ReviewEditor.selectInputs.group': 'Group',
   'ReviewEditor.selectInputs.groupPlaceholder': 'Select group',
