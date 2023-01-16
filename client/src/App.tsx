@@ -14,7 +14,7 @@ import { enMessages } from './localization/en'
 import { IntlProvider } from 'react-intl'
 import routes from './routes'
 import Alert from './components/Alert'
-import { useCheckSessionMutation } from './redux/apiSlice'
+import { useCheckSessionMutation } from './redux/usersApiSlice'
 import { setUser } from './redux/localSlice'
 
 export default function App() {
@@ -25,14 +25,14 @@ export default function App() {
   const [checkSession] = useCheckSessionMutation()
 
   useEffect(() => {
-    var token = localStorage.getItem('token')
+    let token = localStorage.getItem('token')
     token &&
       checkSession(token)
         .unwrap()
         .then((result) => {
           dispatch(setUser(result))
         })
-  }, [])
+  }, [checkSession, dispatch])
 
   const muiTheme = React.useMemo(
     () =>

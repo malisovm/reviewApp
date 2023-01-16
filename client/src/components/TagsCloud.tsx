@@ -37,7 +37,7 @@ function TagsCloud({ reviews }: IProps) {
     return result
   }
 
-  var uniqueTagsAndCounts: ITag[] = []
+  let uniqueTagsAndCounts: ITag[] = []
   if (tags) uniqueTagsAndCounts = countUniqueTags(tags.filter((tag) => tag !== undefined) as string[])
 
   return (

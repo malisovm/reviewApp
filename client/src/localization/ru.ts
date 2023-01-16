@@ -12,13 +12,13 @@ export const ruMessages: typeof enMessages = {
   'Shared.movies': 'Фильмы',
   'Shared.games': 'Игры',
   'Shared.search': 'Поиск',
+  'Shared.highestRated': 'Лучшие обзоры',
 
   'Login.usernameValidationError': 'Имя должно быть от 3 до 30 символов',
   'Login.passwordValidationError': 'Пароль должен быть от 3 до 3 символов',
   'Login.createNewAccount': 'Создать новый аккаунт',
 
   'Main.newReviews': 'Новые обзоры',
-  'Main.highestRated': 'Лучшие обзоры',
   'Main.noReviews': 'Пока нет обзоров',
   'Main.cancelFilter': 'Убрать фильтр',
 

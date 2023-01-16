@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useAppDispatch } from '../redux/hooks'
 import { setUser, setAlert } from '../redux/localSlice'
-import { useAddUserMutation, useAuthenticateUserMutation, useSocialAuthMutation } from '../redux/apiSlice'
+import { useAddUserMutation, useAuthenticateUserMutation, useSocialAuthMutation } from '../redux/usersApiSlice'
 import { IUser, IUserResponse } from '../interfaces'
 import useLocMsg from '../localization/useLocMsg'
 import routes from '../routes'
@@ -83,7 +83,7 @@ export default function Login() {
           <div>
             <LoginSocialGoogle
               className="text-sm"
-              client_id={'680300813568-ui151qr8a24jope8orj6r90ltcdsde1n.apps.googleusercontent.com' || ''} // todo: how to protect this?
+              client_id={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''} // todo: how to protect this?
               onResolve={({ provider, data }: IResolveParams) => {
                 handleUserAction(socialAuth({ socialNetwork: provider, username: data?.name }))
               }}

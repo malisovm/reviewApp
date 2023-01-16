@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { IReview } from '../interfaces'
-import { useAddReviewMutation, useGetReviewsQuery, useEditReviewMutation } from '../redux/apiSlice'
+import { useAddReviewMutation, useGetReviewsQuery, useEditReviewMutation } from '../redux/reviewsApiSlice'
 import { useNavigate, useLocation } from 'react-router-dom'
-import MDEditor from '@uiw/react-md-editor'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import PicUpload from '../components/PicUpload'
+import MDEditor from '@uiw/react-md-editor'
 import MarkdownText from '../components/MarkdownText'
 import { setAlert } from '../redux/localSlice'
-import Chip from '@mui/material/Chip'
-import Autocomplete from '@mui/material/Autocomplete'
-import TextField from '@mui/material/TextField'
 import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
 import routes from '../routes'
+import TagsInput from '../components/TagsInput'
 
 export default function ReviewEditor() {
   const locMsg = useLocMsg()
@@ -24,7 +22,7 @@ export default function ReviewEditor() {
   const theme = useAppSelector((state) => state.local.theme)
   const { state } = useLocation() // this state is the props passed via react router if the component was launched in "edit" mode
   const user = state.user
-  var review: IReview | undefined = undefined
+  let review: IReview | undefined = undefined
   if (state && state.review) review = state.review
   const [newReviewTags, setNewReviewTags] = useState<string[]>([])
   const [text, setText] = useState(review ? review.text : '')
@@ -40,7 +38,7 @@ export default function ReviewEditor() {
 
   useEffect(() => {
     register('text', { required: true, minLength: 10, maxLength: 2000 })
-  }, [])
+  }, [register])
 
   function handleTextChange(text?: string) {
     setText(text || '')
@@ -148,32 +146,12 @@ export default function ReviewEditor() {
             {<PicUpload pic={review ? review.pic : undefined} setPic={setPic} />}
           </label>
 
-          <label>
-            {locMsg('Shared.tags')}
-            <Autocomplete
-              multiple
-              options={uniqueTags as string[]}
-              defaultValue={review ? review.tags : undefined}
-              freeSolo
-              onChange={(_, values) => {
-                setNewReviewTags(values)
-              }}
-              renderTags={(value: readonly string[], getTagProps) =>
-                value.map((option: string, index: number) => (
-                  <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField {...params} variant="filled" placeholder={locMsg('ReviewEditor.tagsPlaceholder')} />
-              )}
-            />
-          </label>
+          <TagsInput uniqueTags={uniqueTags as string[]} setNewReviewTags={setNewReviewTags} review={review} />
 
           <button type="submit" className="btn btn-active btn-primary mt-3">
             {locMsg('Shared.submit')}
           </button>
         </form>
-      </section>
-    </div>
+      </section>     </div>
   )
 }

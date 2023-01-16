@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { useGetUsersQuery } from '../redux/apiSlice'
+import React, { useMemo, useCallback } from 'react'
+import { useGetUsersQuery } from '../redux/usersApiSlice'
 import { useNavigate } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
@@ -12,15 +12,15 @@ export default function Userlist() {
   const navigate = useNavigate()
   const { data: users, isLoading, isError } = useGetUsersQuery()
 
-  function handleClick(user: IUser) {
+  const handleClick = useCallback(function (user: IUser) {
     if (user.role !== 'admin') {
-    navigate(routes.myReviews, {
-      state: user,
-    })}
-    else navigate(routes.myReviews)
-  }
+      navigate(routes.myReviews, {
+        state: user,
+      })
+    } else navigate(routes.myReviews)
+  }, [navigate])
 
-// component columns API: https://www.material-react-table.com/docs/getting-started/usage
+  // component columns API: https://www.material-react-table.com/docs/getting-started/usage
 
   const columns = useMemo<MRT_ColumnDef<IUser>[]>(
     () => [
@@ -50,7 +50,7 @@ export default function Userlist() {
         Header: <b className="text-primary">{locMsg('Userlist.likes')}</b>,
       },
     ],
-    [],
+    [handleClick, locMsg],
   )
 
   if (isLoading) return <button className="btn loading">{locMsg('Shared.loading')}</button>

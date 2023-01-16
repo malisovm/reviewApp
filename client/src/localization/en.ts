@@ -10,16 +10,16 @@ export const enMessages = {
   'Shared.movies': 'Movies',
   'Shared.games': 'Games',
   'Shared.search': 'Search',
+  'Shared.highestRated': 'Highest rated',
 
   'Login.usernameValidationError': 'Username must be 3-30 symbols long',
   'Login.passwordValidationError': 'Password must be 3-30 symbols long',
   'Login.createNewAccount': 'Create new account',
 
   'Main.newReviews': 'New reviews',
-  'Main.highestRated': 'Highest rated',
   'Main.noReviews': 'No reviews yet',
   'Main.cancelFilter': 'Cancel filter',
-
+  
   'ReviewCard.readReview': 'Read review',
 
   'Review.reviewOf': 'Review of',

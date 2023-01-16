@@ -10,7 +10,7 @@ export default function Alert() {
     setTimeout(() => {
       dispatch(setAlert({ variant: '', text: '' }))
     }, 2000)
-  }, [text])
+  }, [text, dispatch])
 
   return text ? <div className={`${variant} mx-auto text-center w-1/6 p-2 rounded-xl`}>{text}</div> : <></>
   // the empty <></> is needed so the component return type is never null

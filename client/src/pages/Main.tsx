@@ -1,20 +1,21 @@
 import React from 'react'
 import TagsCloud from '../components/TagsCloud'
-import { useGetReviewsQuery } from '../redux/apiSlice'
+import { useGetReviewsQuery } from '../redux/reviewsApiSlice'
 import { IReview, TagFilterType, SearchFilterType } from '../interfaces'
 import ReviewCard from '../components/ReviewCard'
 import useLocMsg from '../localization/useLocMsg'
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { setFilter } from '../redux/localSlice'
+import ReviewColumn from '../components/ReviewCategory'
 
 export default function Main() {
   const dispatch = useAppDispatch()
   const locMsg = useLocMsg()
   const { data: reviews, isLoading, isError } = useGetReviewsQuery(undefined, { pollingInterval: 5000 }) // the interval is used to update comments
-  var newestReviews: IReview[] = []
-  var highestRatedReviews: IReview[] = []
-  var filteredReviews: IReview[] = []
-  var filter = useAppSelector((state) => state.local.filter)
+  let newestReviews: IReview[] = []
+  let highestRatedReviews: IReview[] = []
+  let filteredReviews: IReview[] = []
+  let filter = useAppSelector((state) => state.local.filter)
 
   if (reviews) {
     newestReviews = [...reviews].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6)
@@ -38,25 +39,11 @@ export default function Main() {
       {!filter && (
         <div className="flex flex-row w-5/6 justify-center flex-wrap gap-12">
           {newestReviews.length > 0 && (
-            <section>
-              <h1 className="text-center">{locMsg('Main.newReviews')}</h1>
-              <article className="flex flex-col justify-center mt-5 gap-5 flex-wrap">
-                {newestReviews?.map((review: IReview, index) => (
-                  <ReviewCard review={review} key={review._id} />
-                ))}
-              </article>
-            </section>
+            <ReviewColumn reviews={newestReviews} title={locMsg('Main.newReviews')}/>
           )}
 
           {highestRatedReviews.length > 0 && (
-            <section>
-              <h1 className="text-center">{locMsg('Main.highestRated')}</h1>
-              <article className="flex flex-col justify-center mt-5 gap-5 flex-wrap">
-                {highestRatedReviews?.map((review: IReview, index) => (
-                  <ReviewCard review={review} key={review._id} />
-                ))}
-              </article>
-            </section>
+            <ReviewColumn reviews={highestRatedReviews} title={locMsg('Shared.highestRated')}/>
           )}
 
           {!newestReviews.length ? (
@@ -64,7 +51,7 @@ export default function Main() {
           ) : (
             !highestRatedReviews.length && (
               <section>
-                <h1 className="text-center">{locMsg('Main.highestRated')}</h1>
+                <h1 className="text-center">{locMsg('Shared.highestRated')}</h1>
                 <h2 className="italic text-center">{locMsg('Shared.noneYet')}</h2>
               </section>
             )

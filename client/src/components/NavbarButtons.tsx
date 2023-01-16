@@ -7,7 +7,7 @@ import { DarkModeSwitch } from 'react-toggle-dark-mode'
 import useLocMsg from '../localization/useLocMsg'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined'
 import routes from '../routes'
-import { useLazySearchReviewsQuery } from '../redux/apiSlice'
+import { useLazySearchReviewsQuery } from '../redux/reviewsApiSlice'
 
 export default function NavbarButtons() {
   const locMsg = useLocMsg()
@@ -49,14 +49,14 @@ export default function NavbarButtons() {
 
       {!user.username ? (
         <li id="Log in">
-          <a
+          <button
             className="btn btn-ghost hover:btn-primary mx-1"
             onClick={() => {
               navigate(routes.login)
             }}
           >
             {locMsg('Shared.logIn')}
-          </a>
+          </button>
         </li>
       ) : (
         <>

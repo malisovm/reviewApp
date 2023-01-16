@@ -7,7 +7,7 @@ import { Rating } from 'react-simple-star-rating'
 import ScoreIndicator from './ScoreIndicator'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined'
 import { useAppSelector } from '../redux/hooks'
-import { useEditReviewMutation } from '../redux/apiSlice'
+import { useEditReviewMutation } from '../redux/reviewsApiSlice'
 import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
 
 interface IProps {
@@ -45,7 +45,7 @@ export default function Review({ review, expanded }: IProps) {
         <img src={review.pic} alt="" className="max-h-72" />
       </figure>
 
-      <header className="card-body">
+      <header className={`card-body mt-2 ${expanded ? 'pl-3' : ''}`}>
         <h2 className="flex justify-between card-title" id="First line of card">
           <span id="Title and group">
             <span id="Title" className="mr-2">
@@ -105,7 +105,9 @@ export default function Review({ review, expanded }: IProps) {
             <section id="Likes" className="my-3">
               <button onClick={handleLike} disabled={user.username && review.username !== user.username ? false : true}>
                 <ThumbUpOutlinedIcon
-                  className={`${review.likes.includes(user.username) ? 'text-primary' : 'text-zinc-200'} align-text-top`}
+                  className={`${
+                    review.likes.includes(user.username) ? 'text-primary' : 'text-zinc-200'
+                  } align-text-top`}
                 />
               </button>
               {review.likes.length}

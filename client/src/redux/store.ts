@@ -1,13 +1,16 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
-import { dataApi } from './apiSlice'
+import { reviewsApi } from './reviewsApiSlice'
+import { usersApi } from './usersApiSlice'
 import localReducer from './localSlice'
 
 export const store = configureStore({
   reducer: {
     local: localReducer,
-    [dataApi.reducerPath]: dataApi.reducer,
+    [reviewsApi.reducerPath]: reviewsApi.reducer,
+    [usersApi.reducerPath]: usersApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(dataApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(reviewsApi.middleware).concat(usersApi.middleware),
 })
 
 export type AppDispatch = typeof store.dispatch

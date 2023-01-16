@@ -9,6 +9,8 @@ import { IUser, IReview, IUserResponse, IUserDocument } from './interfaces.js'
 import passport from 'passport'
 import session from 'express-session'
 import jwt from 'jsonwebtoken'
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -19,7 +21,7 @@ const PORT = process.env.PORT || 3001
 app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')))
 const JSONParser = express.json({ type: 'application/json' })
 mongoose.connect(
-  'mongodb+srv://user12345:12345@cluster1.mgmwwie.mongodb.net/ratingApp',
+  process.env.DBPATH as string,
   //'mongodb://localhost:27017/',
   { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions,
   (err) => {
@@ -31,7 +33,7 @@ mongoose.connect(
   },
 )
 
-const secret = 'bla bla bla'
+const secret = process.env.SECRET as string
 
 app.use(
   session({
@@ -150,11 +152,13 @@ app.post('/users/socialauth/google', JSONParser, async (req, res) => {
 
 app.post('/users/checksession', (req: Request, res: Response) => {
   let token = req.headers.token as string
-  jwt.verify(token, secret, (err, decoded: any) => {
-    User.findOne({ _id: decoded.userId }, (err: MongooseError, user: IUser) => {
-      user && res.send(user)
+  if (token) {
+    jwt.verify(token, secret, (err, decoded: any) => {
+      User.findOne({ _id: decoded.userId }, (err: MongooseError, user: IUser) => {
+        user && res.send(user)
+      })
     })
-  })
+  }
 })
 
 app.get('/reviews', (_, res: Response) => {

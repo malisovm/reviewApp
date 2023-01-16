@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { useGetReviewsQuery } from '../redux/apiSlice'
+import React, { useMemo, useCallback } from 'react'
+import { useGetReviewsQuery, useDeleteReviewMutation } from '../redux/reviewsApiSlice'
 import { useNavigate, useLocation } from 'react-router-dom'
 import MaterialReactTable from 'material-react-table'
 import type { MRT_ColumnDef } from 'material-react-table'
@@ -9,7 +9,6 @@ import Modal from '../components/Modal'
 import Review from '../components/Review'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { useDeleteReviewMutation } from '../redux/apiSlice'
 import useLocMsg, { LocMsgKey } from '../localization/useLocMsg'
 import { MRT_Localization_EN } from 'material-react-table/locales/en'
 import { MRT_Localization_RU } from 'material-react-table/locales/ru'
@@ -19,8 +18,8 @@ import { setUser } from '../redux/localSlice'
 export default function MyReviews() {
   const dispatch = useAppDispatch()
   const locMsg = useLocMsg()
-  var user = useAppSelector((state) => state.local.user)
-  var locale = useAppSelector((state) => state.local.locale)
+  let user = useAppSelector((state) => state.local.user)
+  let locale = useAppSelector((state) => state.local.locale)
   const navigate = useNavigate()
   const { state: adminViewUser } = useLocation()
   if (adminViewUser) user = adminViewUser
@@ -38,12 +37,13 @@ export default function MyReviews() {
   function handleCreate() {
     navigate(routes.reviewEditor, { state: { user: user } })
   }
-  function handleEdit(row: IReview) {
+  const handleEdit = useCallback(function (row: IReview) {
     navigate(routes.reviewEditor, {
       state: { review: row, user: user },
     })
-  }
-  function handleDelete(row: IReview) {
+  }, [navigate, user])
+
+  const handleDelete = useCallback(function (row: IReview) {
     deleteReview(row)
       .unwrap()
       .then((fulfilled: any) => {
@@ -54,7 +54,7 @@ export default function MyReviews() {
         }
         navigate(routes.main)
       })
-  }
+  }, [adminViewUser, deleteReview, dispatch, navigate, user])
 
   // component columns API: https://www.material-react-table.com/docs/getting-started/usage
 
@@ -122,7 +122,7 @@ export default function MyReviews() {
         size: 40,
       },
     ],
-    [locale],
+    [handleDelete, handleEdit, locMsg],
   )
 
   if (isLoading) return <button className="btn loading">{locMsg('Shared.loading')}</button>
