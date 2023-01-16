@@ -11,7 +11,7 @@ import ReviewColumn from '../components/ReviewCategory'
 export default function Main() {
   const dispatch = useAppDispatch()
   const locMsg = useLocMsg()
-  const { data: reviews, isLoading, isError } = useGetReviewsQuery(undefined, { pollingInterval: 5000 }) // the interval is used to update comments
+  const { data: reviews, isLoading, isError } = useGetReviewsQuery(undefined, { pollingInterval: 5000 }) // the interval is used to update comments; todo: change this to websockets
   let newestReviews: IReview[] = []
   let highestRatedReviews: IReview[] = []
   let filteredReviews: IReview[] = []

@@ -83,7 +83,7 @@ export default function Login() {
           <div>
             <LoginSocialGoogle
               className="text-sm"
-              client_id={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''} // todo: how to protect this?
+              client_id={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}
               onResolve={({ provider, data }: IResolveParams) => {
                 handleUserAction(socialAuth({ socialNetwork: provider, username: data?.name }))
               }}
